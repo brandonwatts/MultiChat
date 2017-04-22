@@ -18,6 +18,7 @@ class QuizController: UIViewController {
     var LEVEL_COLOR: UIColor?
     var CURRENT_CHOICE: UIButton?
     
+    @IBOutlet weak var Submit_Button: UIButton!
     
     
     
@@ -58,6 +59,8 @@ class QuizController: UIViewController {
     
     func animateChoice(button:UIButton) -> UIButton{
         
+        Submit_Button.isHidden = false
+        
         /***** Set Buttons back to original color ***/
         let orignialBackground = UIImage(named: "Button")
         A_Button.setBackgroundImage(orignialBackground, for: .normal)
@@ -75,6 +78,10 @@ class QuizController: UIViewController {
         changedButton.setBackgroundImage(selectedImage, for: .normal)
         changedButton.setTitleColor(UIColor.white, for: .normal)
         return changedButton
+    }
+    
+    @IBAction func submitAnswer(_ sender: Any) {
+        
     }
 
 }
