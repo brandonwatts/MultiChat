@@ -17,6 +17,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var browser: MCBrowserViewController!
     var assistant: MCAdvertiserAssistant!
     
+    var quizNum = 0
+    var quizArray = [Quiz]()
     
     @IBOutlet weak var chatWindow: UITextView!
     @IBOutlet weak var messageTF: UITextField!
@@ -35,6 +37,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         session.delegate = self
         browser.delegate = self
         
+        obtainQuizPage()
+        
     }
     
     @IBAction func sendMessage(_ sender: UIButton) {
@@ -46,7 +50,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             try session.send(dataToSend, toPeers: session.connectedPeers, with: .unreliable)
         }
         catch let err {
-            //print("Error in sending data \(err)")
+            print("Error in sending data \(err)")
         }
         
         updateChatView(newText: msg!, id: peerID)
@@ -137,12 +141,56 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     //**********************************************************
     
     
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    func obtainQuizPage() {
+        var quizQuestions = [Question]()
+        quizNum = quizNum + 1
+        let url = URL(string: "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz\(quizNum).json")
+        
+
+        // had to change info.plist to use http since ios wants to use https only
+        URLSession.shared.dataTask(with: url!) { (data, response, error) in
+            
+            if error != nil {
+                print(error!)
+            } else {
+            
+            do {
+                
+                let data = data
+                if let json = try JSONSerialization.jsonObject(with: data!) as? [String: Any] {
+                print(json)
+                let topic = json["topic"] as! String
+                let count = json["numberOfQuestions"] as! Int
+                
+                if let question = json["questions"] as? [[String: Any]] {
+                    for quest in question {
+                        let qNum = quest["number"] as! Int
+                        let sentence = quest["questionSentence"] as! String
+                        // works better to store as dictionary 
+                        let opt = quest["options"] as! [String: String]
+                        let correct = quest["correctOption"] as! String
+                        
+                        quizQuestions.append(Question(sentence: sentence, poss: opt, correct: correct, qNum: qNum))
+                    }
+                }
+                
+                
+                self.quizArray.append(Quiz(qArray: quizQuestions, top: topic, numQ: count))
+                }
+                
+            } catch {
+                print("encountered error")
+            }
+                }
     
+    
+    
+            }.resume()
+    }
 }
 

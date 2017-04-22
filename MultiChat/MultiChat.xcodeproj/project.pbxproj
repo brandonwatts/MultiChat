@@ -12,6 +12,8 @@
 		5DC073841EA95B6D0028BBFA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DC073831EA95B6D0028BBFA /* Assets.xcassets */; };
 		5DC073871EA95B6D0028BBFA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DC073851EA95B6D0028BBFA /* LaunchScreen.storyboard */; };
 		5DC0738F1EA95BCF0028BBFA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DC0738E1EA95BCF0028BBFA /* Main.storyboard */; };
+		B5FAE43C1EABB5550041E0F0 /* Quiz.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FAE43B1EABB5550041E0F0 /* Quiz.swift */; };
+		B5FAE43E1EABCEC80041E0F0 /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FAE43D1EABCEC80041E0F0 /* Question.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		5DC073861EA95B6D0028BBFA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5DC073881EA95B6D0028BBFA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DC0738E1EA95BCF0028BBFA /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		B5FAE43B1EABB5550041E0F0 /* Quiz.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Quiz.swift; sourceTree = "<group>"; };
+		B5FAE43D1EABCEC80041E0F0 /* Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Question.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,8 @@
 			children = (
 				5DC0737C1EA95B6D0028BBFA /* AppDelegate.swift */,
 				5DC0737E1EA95B6D0028BBFA /* ViewController.swift */,
+				B5FAE43B1EABB5550041E0F0 /* Quiz.swift */,
+				B5FAE43D1EABCEC80041E0F0 /* Question.swift */,
 				5DC0738E1EA95BCF0028BBFA /* Main.storyboard */,
 				5DC073831EA95B6D0028BBFA /* Assets.xcassets */,
 				5DC073851EA95B6D0028BBFA /* LaunchScreen.storyboard */,
@@ -138,7 +144,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DC0737F1EA95B6D0028BBFA /* ViewController.swift in Sources */,
+				B5FAE43E1EABCEC80041E0F0 /* Question.swift in Sources */,
 				5DC0737D1EA95B6D0028BBFA /* AppDelegate.swift in Sources */,
+				B5FAE43C1EABB5550041E0F0 /* Quiz.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +304,7 @@
 				5DC0738D1EA95B6D0028BBFA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
