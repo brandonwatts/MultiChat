@@ -174,10 +174,20 @@
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e0g-7O-iwY" customClass="KDCircularProgress" customModule="MultiChat" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="60" height="60"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m7F-Mw-72D">
+                                                        <rect key="frame" x="18.333333333333343" y="17.666666666666671" width="23.333333333333314" height="24.666666666666657"/>
+                                                        <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="18"/>
+                                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <constraints>
+                                                    <constraint firstItem="m7F-Mw-72D" firstAttribute="centerX" secondItem="e0g-7O-iwY" secondAttribute="centerX" id="Nlx-9L-EI0"/>
                                                     <constraint firstAttribute="height" constant="60" id="Nva-d7-J4Q"/>
                                                     <constraint firstAttribute="width" constant="60" id="lep-f7-Kla"/>
+                                                    <constraint firstItem="m7F-Mw-72D" firstAttribute="centerY" secondItem="e0g-7O-iwY" secondAttribute="centerY" id="noL-OW-5zy"/>
                                                 </constraints>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="angle">
@@ -185,6 +195,18 @@
                                                     </userDefinedRuntimeAttribute>
                                                     <userDefinedRuntimeAttribute type="number" keyPath="startAngle">
                                                         <real key="value" value="0.0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="glowAmount">
+                                                        <real key="value" value="0.0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="color" keyPath="trackColor">
+                                                        <color key="value" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="gradientRotateSpeed">
+                                                        <real key="value" value="0.0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="color" keyPath="IBColor1">
+                                                        <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </view>
@@ -375,6 +397,8 @@
                         <outlet property="C_Button" destination="Y6w-az-63G" id="33Y-LB-zfW"/>
                         <outlet property="D_Button" destination="j7Q-h2-Kb0" id="lkD-4t-BuC"/>
                         <outlet property="Submit_Button" destination="j2T-XY-cfG" id="bcY-Xd-eIb"/>
+                        <outlet property="levelTimer" destination="e0g-7O-iwY" id="J7d-Ip-4rw"/>
+                        <outlet property="timeLabel" destination="m7F-Mw-72D" id="kfR-fF-Bhh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0j6-SH-tvw" userLabel="First Responder" sceneMemberID="firstResponder"/>

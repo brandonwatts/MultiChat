@@ -10,29 +10,40 @@ import UIKit
 
 class QuizController: UIViewController {
 
-    
     @IBOutlet weak var A_Button: UIButton!
     @IBOutlet weak var B_Button: UIButton!
     @IBOutlet weak var C_Button: UIButton!
     @IBOutlet weak var D_Button: UIButton!
-    var LEVEL_COLOR: UIColor?
-    var CURRENT_CHOICE: UIButton?
-    
     @IBOutlet weak var Submit_Button: UIButton!
+    @IBOutlet weak var levelTimer: KDCircularProgress!
+    @IBOutlet weak var timeLabel: UILabel!
     
+    var LEVEL_COLOR: UIColor?  // Current Color Scheme of the Level
+    var CURRENT_CHOICE: UIButton? // Current Answer Choice Selected by the User
+    var questionTimer: Timer!
+    var QUESTION_TIME = 25
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0)
-
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0) // Nice Blue Color
+        levelTimer.angle = 360
+        timeLabel.text = String(QUESTION_TIME)
+        levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
+        questionTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
     }
     
+    func updateTimer(){
+        if (QUESTION_TIME != 0)
+        {
+            QUESTION_TIME = QUESTION_TIME - 1
+            timeLabel.text = String(QUESTION_TIME)
+        }
+        else{
+            questionTimer.invalidate()
+            //END GAME
+        }
+    }
 
     @IBAction func selectAnswer(_ sender: UIButton) {
         switch sender {
@@ -81,7 +92,7 @@ class QuizController: UIViewController {
     }
     
     @IBAction func submitAnswer(_ sender: Any) {
-        
+        // TODO: Handle Answer Choice
     }
 
 }
