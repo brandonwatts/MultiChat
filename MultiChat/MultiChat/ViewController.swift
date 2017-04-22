@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  MultipeerExample
-//
-//  Created by Eyuphan Bulut on 4/5/17.
-//  Copyright © 2017 Eyuphan Bulut. All rights reserved.
-//
-
 import UIKit
 import MultipeerConnectivity
 
@@ -76,28 +68,21 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBAction func connect(_ sender: UIButton) {
         
         present(browser, animated: true, completion: nil)
-        
+
     }
     
+    @IBAction func startQuiz(_ sender: Any) {
+        performSegue(withIdentifier: "quiz", sender: nil)
+    }
     
-    //**********************************************************
-    // required functions for MCBrowserViewControllerDelegate
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
-        // Called when the browser view controller is dismissed
         dismiss(animated: true, completion: nil)
     }
     
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
-        // Called when the browser view controller is cancelled
         dismiss(animated: true, completion: nil)
     }
-    //**********************************************************
-    
-    
-    
-    
-    //**********************************************************
-    // required functions for MCSessionDelegate
+
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL, withError error: Error?) {
         
     }
@@ -107,19 +92,17 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         // this needs to be run on the main thread
         DispatchQueue.main.async(execute: {
             
-            if let receivedString = NSKeyedUnarchiver.unarchiveObject(with: data) as? String{
-                self.updateChatView(newText: receivedString, id: peerID)
+            if (NSKeyedUnarchiver.unarchiveObject(with: data) as? String) != nil{
+                //self.updateChatView(newText: receivedString, id: peerID)
             }
             
         })
     }
     
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
-        
     }
     
-    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID){
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
