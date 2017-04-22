@@ -12,9 +12,6 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var quizNum = 0
     var quizArray = [Quiz]()
     
-    @IBOutlet weak var chatWindow: UITextView!
-    @IBOutlet weak var messageTF: UITextField!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -32,41 +29,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         obtainQuizPage()
         
     }
-    
-    @IBAction func sendMessage(_ sender: UIButton) {
-        
-        let msg = messageTF.text
-        let dataToSend =  NSKeyedArchiver.archivedData(withRootObject: msg!)
-        
-        do{
-            try session.send(dataToSend, toPeers: session.connectedPeers, with: .unreliable)
-        }
-        catch let err {
-            print("Error in sending data \(err)")
-        }
-        
-        updateChatView(newText: msg!, id: peerID)
-        
-    }
-    
-    func updateChatView(newText: String, id: MCPeerID){
-        
-        let currentText = chatWindow.text
-        var addThisText = ""
-        
-        if(id == peerID){
-            addThisText = "Me: " + newText + "\n"
-        }
-        else
-        {
-            addThisText = "\(id.displayName): \(newText)\n"
-        }
-        chatWindow.text = currentText! + addThisText
-        
-    }
-    
-    @IBAction func connect(_ sender: UIButton) {
-        
+    @IBAction func connect(_ sender: Any) {
         present(browser, animated: true, completion: nil)
 
     }
