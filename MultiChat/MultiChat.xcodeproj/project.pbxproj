@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D171B911EABBCE60005BFD3 /* KDCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D171B901EABBCE60005BFD3 /* KDCircularProgress.swift */; };
+		5D171B931EABDE940005BFD3 /* QuizController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D171B921EABDE940005BFD3 /* QuizController.swift */; };
 		5DC0737D1EA95B6D0028BBFA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0737C1EA95B6D0028BBFA /* AppDelegate.swift */; };
 		5DC0737F1EA95B6D0028BBFA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0737E1EA95B6D0028BBFA /* ViewController.swift */; };
 		5DC073841EA95B6D0028BBFA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DC073831EA95B6D0028BBFA /* Assets.xcassets */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D171B901EABBCE60005BFD3 /* KDCircularProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDCircularProgress.swift; sourceTree = "<group>"; };
+		5D171B921EABDE940005BFD3 /* QuizController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizController.swift; sourceTree = "<group>"; };
 		5DC073791EA95B6D0028BBFA /* MultiChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DC0737C1EA95B6D0028BBFA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5DC0737E1EA95B6D0028BBFA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -60,6 +64,8 @@
 				5DC073831EA95B6D0028BBFA /* Assets.xcassets */,
 				5DC073851EA95B6D0028BBFA /* LaunchScreen.storyboard */,
 				5DC073881EA95B6D0028BBFA /* Info.plist */,
+				5D171B901EABBCE60005BFD3 /* KDCircularProgress.swift */,
+				5D171B921EABDE940005BFD3 /* QuizController.swift */,
 			);
 			path = MultiChat;
 			sourceTree = "<group>";
@@ -137,6 +143,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D171B931EABDE940005BFD3 /* QuizController.swift in Sources */,
+				5D171B911EABBCE60005BFD3 /* KDCircularProgress.swift in Sources */,
 				5DC0737F1EA95B6D0028BBFA /* ViewController.swift in Sources */,
 				5DC0737D1EA95B6D0028BBFA /* AppDelegate.swift in Sources */,
 			);
@@ -296,6 +304,7 @@
 				5DC0738D1EA95B6D0028BBFA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
