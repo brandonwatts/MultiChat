@@ -17,6 +17,21 @@ class QuizController: UIViewController {
     @IBOutlet weak var Submit_Button: UIButton!
     @IBOutlet weak var levelTimer: KDCircularProgress!
     @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var Player_1_Score: UILabel!
+    @IBOutlet weak var Player_2_Score: UILabel!
+    @IBOutlet weak var Player_3_Score: UILabel!
+    @IBOutlet weak var Player_4_Score: UILabel!
+    @IBOutlet weak var Question_Text: UILabel!
+    @IBOutlet weak var Finish_Display_Text: UILabel!
+    @IBOutlet weak var Next_Question_Button: UIImageView!
+    @IBOutlet weak var Player_1_Answer: UILabel!
+    @IBOutlet weak var Player_2_Answer: UILabel!
+    @IBOutlet weak var Player_3_Answer: UILabel!
+    @IBOutlet weak var Player_4_Answer: UILabel!
+    @IBOutlet weak var Player_1_Speech_Bubble: UIView!
+    @IBOutlet weak var Player_2_Speech_Bubble: UIView!
+    @IBOutlet weak var Player_3_Speech_Bubble: UIView!
+    @IBOutlet weak var Player_4_Speech_Bubble: UIView!
     
     var LEVEL_COLOR: UIColor?  // Current Color Scheme of the Level
     var CURRENT_CHOICE: UIButton? // Current Answer Choice Selected by the User
@@ -91,7 +106,33 @@ class QuizController: UIViewController {
         return changedButton
     }
     
+    func displayAnswer(forPlayer: Int, withAnswer: String) {
+        
+        switch(forPlayer){
+        case 1:
+            Player_1_Speech_Bubble.isHidden = false
+            Player_1_Answer.text = withAnswer
+            break
+        case 2:
+            Player_2_Speech_Bubble.isHidden = false
+            Player_2_Answer.text = withAnswer
+            break
+        case 3:
+            Player_3_Speech_Bubble.isHidden = false
+            Player_3_Answer.text = withAnswer
+            break
+        case 4:
+            Player_4_Speech_Bubble.isHidden = false
+            Player_4_Answer.text = withAnswer
+            break
+        default:
+            break
+        }
+    }
+    
     @IBAction func submitAnswer(_ sender: Any) {
+        let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
+        displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         // TODO: Handle Answer Choice
     }
 
