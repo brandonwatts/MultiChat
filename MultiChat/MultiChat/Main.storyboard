@@ -329,12 +329,15 @@
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j2T-XY-cfG">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j2T-XY-cfG">
                                 <rect key="frame" x="142" y="548.33333333333337" width="130" height="45"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="18"/>
                                 <state key="normal" title="Submit" backgroundImage="Submit_Button">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="submitAnswer:" destination="7pW-SS-yrH" eventType="touchUpInside" id="yBx-Ce-OmR"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="0.011764705882352941" green="0.66274509803921566" blue="0.95686274509803915" alpha="1" colorSpace="calibratedRGB"/>
@@ -371,6 +374,7 @@
                         <outlet property="B_Button" destination="C4U-cR-jhH" id="O60-ae-Lgp"/>
                         <outlet property="C_Button" destination="Y6w-az-63G" id="33Y-LB-zfW"/>
                         <outlet property="D_Button" destination="j7Q-h2-Kb0" id="lkD-4t-BuC"/>
+                        <outlet property="Submit_Button" destination="j2T-XY-cfG" id="bcY-Xd-eIb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0j6-SH-tvw" userLabel="First Responder" sceneMemberID="firstResponder"/>
