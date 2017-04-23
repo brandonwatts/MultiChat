@@ -54,24 +54,13 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             alertUser(alert: "Get some friends, need atleast two users for this option!")
         }
         
-        
-        
-        
-        
-        // in this we need to check to make sure
-//        session.connectedPeers.count > 0
-        // to move to multiple quiz place
-        
     }
     
     func alertUser(alert: String) {
         
         let alert = UIAlertController(title: "Invalid Option", message: alert, preferredStyle: .alert)
-        let myAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-//        let second = UIAlertAction(title: "Cancel", style: .cancel, handler: { action in self.performSegue(withIdentifier: "homeScreen", sender: self)});
-        
+        let myAction = UIAlertAction(title: "OK", style: .default, handler: nil)        
         alert.addAction(myAction)
-//        alert.addAction(second)
         present(alert, animated: true, completion: nil)
         
     }
