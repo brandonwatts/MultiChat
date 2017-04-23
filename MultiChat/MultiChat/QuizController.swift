@@ -10,10 +10,40 @@ import UIKit
 
 class QuizController: UIViewController {
 
+    /*** Answer Buttons ***/
     @IBOutlet weak var A_Button: UIButton!
     @IBOutlet weak var B_Button: UIButton!
     @IBOutlet weak var C_Button: UIButton!
     @IBOutlet weak var D_Button: UIButton!
+    
+    /*** Player Scores ***/
+    @IBOutlet weak var Player_1_Score: UILabel!
+    @IBOutlet weak var Player_2_Score: UILabel!
+    @IBOutlet weak var Player_3_Score: UILabel!
+    @IBOutlet weak var Player_4_Score: UILabel!
+    
+    /*** Player Avatars ***/
+    @IBOutlet weak var Player_1_Avatar: UIImageView!
+    @IBOutlet weak var Player_2_Avatar: UIImageView!
+    @IBOutlet weak var Player_3_Avatar: UIImageView!
+    @IBOutlet weak var Player_4_Avatar: UIImageView!
+
+    /*** Player Answers ***/
+    @IBOutlet weak var Player_1_Answer: UILabel!
+    @IBOutlet weak var Player_2_Answer: UILabel!
+    @IBOutlet weak var Player_3_Answer: UILabel!
+    @IBOutlet weak var Player_4_Answer: UILabel!
+    
+    /*** Players Speech Bubbles ***/
+    @IBOutlet weak var Player_1_Speech_Bubble: UIView!
+    @IBOutlet weak var Player_2_Speech_Bubble: UIView!
+    @IBOutlet weak var Player_3_Speech_Bubble: UIView!
+    @IBOutlet weak var Player_4_Speech_Bubble: UIView!
+    
+    
+    @IBOutlet weak var Question_Text: UILabel!
+    @IBOutlet weak var Finish_Display_Text: UILabel!
+    @IBOutlet weak var Next_Question_Button: UIImageView!
     @IBOutlet weak var Submit_Button: UIButton!
     @IBOutlet weak var levelTimer: KDCircularProgress!
     @IBOutlet weak var timeLabel: UILabel!
@@ -21,26 +51,44 @@ class QuizController: UIViewController {
     var LEVEL_COLOR: UIColor?  // Current Color Scheme of the Level
     var CURRENT_CHOICE: UIButton? // Current Answer Choice Selected by the User
     var questionTimer: Timer!
-    var QUESTION_TIME = 25
-    
+    var QUESTION_TIME = 20
+    var NUMBER_OF_ACTIVE_PLAYERS = 3
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0) // Nice Blue Color
+        
+        /*** EXAMPLE ON DISPLAYING A QUESTION ***/
+        displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
+
+        /*** Set the level color ***/
+        LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0)
+        
+        /*** The timer starts all the way filled at 360 degrees and 20 seconds on the clock **/
         levelTimer.angle = 360
         timeLabel.text = String(QUESTION_TIME)
+
+        /*** Every second we decrease the timer by 1 and take a little off the display ***/
         levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
         questionTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+        
+        /*** Logic used to place Blank Avatars if the game is not full ***/
+        let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
+        for index in (0 ... 3) {
+            if(index > NUMBER_OF_ACTIVE_PLAYERS - 1) {
+                avatars[index].image = UIImage(named: "Blank_Avatar")
+            }
+        }
     }
     
     func updateTimer(){
-        if (QUESTION_TIME != 0)
-        {
+        if (QUESTION_TIME != 0) {
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
         }
-        else{
+        else {
             questionTimer.invalidate()
+            Finish_Display_Text.isHidden = false
+            Next_Question_Button.isHidden = false
             //END GAME
         }
     }
@@ -68,6 +116,14 @@ class QuizController: UIViewController {
         }
     }
     
+    func displayQuestion(question: String, answers: [String: String]!){
+        Question_Text.text = question;
+        A_Button.setTitle("A) \(answers["A"]!)", for: .normal)
+        B_Button.setTitle("B) \(answers["B"]!)", for: .normal)
+        C_Button.setTitle("C \(answers["C"]!)", for: .normal)
+        D_Button.setTitle("D) \(answers["D"]!)", for: .normal)
+    }
+    
     func animateChoice(button:UIButton) -> UIButton{
         
         Submit_Button.isHidden = false
@@ -91,7 +147,33 @@ class QuizController: UIViewController {
         return changedButton
     }
     
+    func displayAnswer(forPlayer: Int, withAnswer: String) {
+        
+        switch(forPlayer){
+        case 1:
+            Player_1_Speech_Bubble.isHidden = false
+            Player_1_Answer.text = withAnswer
+            break
+        case 2:
+            Player_2_Speech_Bubble.isHidden = false
+            Player_2_Answer.text = withAnswer
+            break
+        case 3:
+            Player_3_Speech_Bubble.isHidden = false
+            Player_3_Answer.text = withAnswer
+            break
+        case 4:
+            Player_4_Speech_Bubble.isHidden = false
+            Player_4_Answer.text = withAnswer
+            break
+        default:
+            break
+        }
+    }
+    
     @IBAction func submitAnswer(_ sender: Any) {
+        let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
+        displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         // TODO: Handle Answer Choice
     }
 
