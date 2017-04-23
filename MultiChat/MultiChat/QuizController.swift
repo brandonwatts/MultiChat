@@ -57,17 +57,24 @@ class QuizController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
+        /*** EXAMPLE ON DISPLAYING A QUESTION ***/
+        displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
 
+        /*** Set the level color ***/
+        LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0)
         
-        LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0) // Nice Blue Color
+        /*** The timer starts all the way filled at 360 degrees and 20 seconds on the clock **/
         levelTimer.angle = 360
         timeLabel.text = String(QUESTION_TIME)
+
+        /*** Every second we decrease the timer by 1 and take a little off the display ***/
         levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
         questionTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
         
+        /*** Logic used to place Blank Avatars if the game is not full ***/
+        let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
         for index in (0 ... 3) {
-            if(index > NUMBER_OF_ACTIVE_PLAYERS - 1){
+            if(index > NUMBER_OF_ACTIVE_PLAYERS - 1) {
                 avatars[index].image = UIImage(named: "Blank_Avatar")
             }
         }
@@ -107,6 +114,14 @@ class QuizController: UIViewController {
         default:
             break
         }
+    }
+    
+    func displayQuestion(question: String, answers: [String: String]!){
+        Question_Text.text = question;
+        A_Button.setTitle("A) \(answers["A"]!)", for: .normal)
+        B_Button.setTitle("B) \(answers["B"]!)", for: .normal)
+        C_Button.setTitle("C \(answers["C"]!)", for: .normal)
+        D_Button.setTitle("D) \(answers["D"]!)", for: .normal)
     }
     
     func animateChoice(button:UIButton) -> UIButton{
