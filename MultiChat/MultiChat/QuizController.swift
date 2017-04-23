@@ -130,6 +130,38 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
     }
     
+    /*** Shake the device to get a random answer choice ***/
+    override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
+        
+        if (motion == .motionShake) {
+            
+            let randomChoice = Int(arc4random_uniform(4))
+            
+            switch randomChoice {
+                
+            case 0:  // A
+                CURRENT_CHOICE = A_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: A_Button)
+            case 1:  // B
+                CURRENT_CHOICE = B_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: B_Button)
+            case 2:  // C
+                CURRENT_CHOICE = C_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: C_Button)
+            case 3:  // D
+                CURRENT_CHOICE = D_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: D_Button)
+            default:
+                break
+            }
+        }
+    }
+    
+    
     func updateTimer(){
         
         /*** If there is still time in the game ***/
@@ -137,6 +169,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
         }
+        
+        /*** The game has ended ***/
         else {
             motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
@@ -148,66 +182,61 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     
-    
-    func shiftMatrix(direction: String)
-    {
-        if(direction == "left")
-        {
-
-            if (selectionMatrix [1][0] == 1) {
-                CURRENT_CHOICE = A_Button
-                updateSelectionMatrix()
-                animateChoice(button: A_Button)
-            }
-            else if (selectionMatrix [1][1] == 1) {
-                CURRENT_CHOICE = C_Button
-                updateSelectionMatrix()
-                animateChoice(button: C_Button)
-            }
-        }
-        if(direction == "right")
-        {
-            
-            if (selectionMatrix [0][0] == 1) {
-                CURRENT_CHOICE = B_Button
-                updateSelectionMatrix()
-                animateChoice(button: B_Button)
-            }
-            else if (selectionMatrix [0][1] == 1) {
-                CURRENT_CHOICE = D_Button
-                updateSelectionMatrix()
-                animateChoice(button: D_Button)
-            }
-        }
-        if(direction == "down")
-        {
-            
-            if (selectionMatrix [1][0] == 1) {
-                CURRENT_CHOICE = D_Button
-                updateSelectionMatrix()
-                animateChoice(button: D_Button)
-            }
-            else if (selectionMatrix [0][0] == 1) {
-                CURRENT_CHOICE = C_Button
-                updateSelectionMatrix()
-                animateChoice(button: C_Button)
-            }
-        }
-        if(direction == "up")
-        {
-            
-            if (selectionMatrix [0][1] == 1) {
-                CURRENT_CHOICE = A_Button
-                updateSelectionMatrix()
-                animateChoice(button: A_Button)
-            }
-            else if (selectionMatrix [1][1] == 1) {
-                CURRENT_CHOICE = B_Button
-                updateSelectionMatrix()
-                animateChoice(button: B_Button)
-            }
-        }
+    /*** Helper function to select answer based on shift ***/
+    func shiftMatrix(direction: String) {
         
+        if(direction == "left") {
+            
+            if (selectionMatrix [1][0] == 1) {  // If answer was "B"
+                CURRENT_CHOICE = A_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: A_Button)
+            }
+            else if (selectionMatrix [1][1] == 1) { // If answer was "D"
+                CURRENT_CHOICE = C_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: C_Button)
+            }
+        }
+        if(direction == "right") {
+            
+            if (selectionMatrix [0][0] == 1) { // If answer was "A"
+                CURRENT_CHOICE = B_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: B_Button)
+            }
+            else if (selectionMatrix [0][1] == 1) { // If answer was "C"
+                CURRENT_CHOICE = D_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: D_Button)
+            }
+        }
+        if(direction == "down") {
+            
+            if (selectionMatrix [1][0] == 1) { // If answer was "B"
+                CURRENT_CHOICE = D_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: D_Button)
+            }
+            else if (selectionMatrix [0][0] == 1) { // If answer was "A"
+                CURRENT_CHOICE = C_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: C_Button)
+            }
+        }
+        if(direction == "up") {
+            
+            if (selectionMatrix [0][1] == 1) { // If answer was "C"
+                CURRENT_CHOICE = A_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: A_Button)
+            }
+            else if (selectionMatrix [1][1] == 1) { // If answer was "D"
+                CURRENT_CHOICE = B_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: B_Button)
+            }
+        }
     }
     
     
@@ -292,7 +321,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             selectionMatrix[1][1] = 1
         default:
             break
-        }        
+        }
     }
     
     func displayQuestion(question: String, answers: [String: String]!){
