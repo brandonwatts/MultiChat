@@ -126,16 +126,17 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     func updateTimer(){
         
-        
+        /*** If there is still time in the game ***/
         if (QUESTION_TIME != 0) {
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
         }
         else {
-            questionTimer.invalidate()
+            motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
             Finish_Display_Text.isHidden = false
             Next_Question_Button.isHidden = false
+            questionTimer.invalidate()
             //END GAME
         }
     }
