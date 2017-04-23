@@ -374,9 +374,6 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Next Button" translatesAutoresizingMaskIntoConstraints="NO" id="Lgw-zI-G4q">
-                                <rect key="frame" x="342.66666666666669" y="678.66666666666663" width="52" height="52"/>
-                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fUw-Zb-URD">
                                 <rect key="frame" x="55" y="427" width="130" height="45"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="18"/>
@@ -445,7 +442,6 @@
                             <constraint firstItem="j7Q-h2-Kb0" firstAttribute="leading" secondItem="C4U-cR-jhH" secondAttribute="leading" id="CZS-b6-YWG"/>
                             <constraint firstAttribute="trailingMargin" secondItem="j2T-XY-cfG" secondAttribute="trailing" constant="122" id="DfI-1I-ZdJ"/>
                             <constraint firstItem="C4U-cR-jhH" firstAttribute="top" secondItem="fUw-Zb-URD" secondAttribute="top" id="Iag-bc-rpq"/>
-                            <constraint firstItem="Lgw-zI-G4q" firstAttribute="trailing" secondItem="Sry-lF-GxN" secondAttribute="trailing" id="IeG-HP-QNX"/>
                             <constraint firstItem="C4U-cR-jhH" firstAttribute="bottom" secondItem="fUw-Zb-URD" secondAttribute="bottom" id="JXM-5f-LhG"/>
                             <constraint firstItem="Y6w-az-63G" firstAttribute="leading" secondItem="1cT-l2-AsZ" secondAttribute="leadingMargin" constant="35" id="NnS-s8-uie"/>
                             <constraint firstItem="B7Y-eH-5Fy" firstAttribute="centerX" secondItem="1cT-l2-AsZ" secondAttribute="centerX" id="Pbn-th-uxP"/>
@@ -461,7 +457,6 @@
                             <constraint firstAttribute="trailingMargin" secondItem="C4U-cR-jhH" secondAttribute="trailing" constant="35" id="spW-6b-5iA"/>
                             <constraint firstItem="P4p-bi-4oE" firstAttribute="top" secondItem="B7Y-eH-5Fy" secondAttribute="bottom" constant="75.670000000000002" id="uQB-qk-BzJ"/>
                             <constraint firstItem="j7Q-h2-Kb0" firstAttribute="trailing" secondItem="C4U-cR-jhH" secondAttribute="trailing" id="uZT-QD-8Nv"/>
-                            <constraint firstItem="Lgw-zI-G4q" firstAttribute="centerY" secondItem="I4e-K6-QA7" secondAttribute="centerY" id="vOI-oN-lul"/>
                             <constraint firstItem="fUw-Zb-URD" firstAttribute="top" secondItem="P4p-bi-4oE" secondAttribute="bottom" constant="35" id="vel-u1-Q99"/>
                             <constraint firstItem="j2T-XY-cfG" firstAttribute="leading" secondItem="1cT-l2-AsZ" secondAttribute="leadingMargin" constant="122" id="vwY-mr-YpN"/>
                             <constraint firstItem="j7Q-h2-Kb0" firstAttribute="top" secondItem="Y6w-az-63G" secondAttribute="top" id="xdX-cu-Nea"/>
@@ -474,7 +469,6 @@
                         <outlet property="C_Button" destination="Y6w-az-63G" id="33Y-LB-zfW"/>
                         <outlet property="D_Button" destination="j7Q-h2-Kb0" id="lkD-4t-BuC"/>
                         <outlet property="Finish_Display_Text" destination="I4e-K6-QA7" id="aPa-Mf-axS"/>
-                        <outlet property="Next_Question_Button" destination="Lgw-zI-G4q" id="gtc-zX-aTo"/>
                         <outlet property="Player_1_Answer" destination="12Z-Jy-Yx6" id="mhD-nW-b9G"/>
                         <outlet property="Player_1_Avatar" destination="0Si-re-x2P" id="f9R-jX-iTA"/>
                         <outlet property="Player_1_Score" destination="dxZ-NX-90S" id="iRb-Sy-O9O"/>
@@ -523,7 +517,6 @@
     <resources>
         <image name="Button" width="130" height="45"/>
         <image name="Icon" width="306" height="255"/>
-        <image name="Next Button" width="52" height="52"/>
         <image name="Question Sheet" width="375" height="476"/>
         <image name="Speech-Bubble-PNG-Clipart" width="30" height="28"/>
         <image name="Start Button" width="213" height="82"/>

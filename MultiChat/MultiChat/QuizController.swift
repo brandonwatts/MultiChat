@@ -46,20 +46,20 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     @IBOutlet weak var Question_Text: UILabel!
     @IBOutlet weak var Finish_Display_Text: UILabel!
-    @IBOutlet weak var Next_Question_Button: UIImageView!
     @IBOutlet weak var Submit_Button: UIButton!
     @IBOutlet weak var levelTimer: KDCircularProgress!
     @IBOutlet weak var timeLabel: UILabel!
     
-    var LEVEL_COLOR: UIColor?  // Current Color Scheme of the Level
-    var CURRENT_CHOICE: UIButton? // Current Answer Choice Selected by the User
-    var questionTimer: Timer!
-    var QUESTION_TIME = 20
-    var NUMBER_OF_ACTIVE_PLAYERS: Int!
+    var LEVEL_COLOR: UIColor?           // Current Color Scheme of the Level
+    var CURRENT_CHOICE: UIButton?       // Current Answer Choice Selected by the User
+    var questionTimer: Timer!           // Timer for the current Question
+    var QUESTION_TIME = 20              // Alloted time to answer the question
+    var shouldShake = true              // Variable to allow the user to shake the device
+    var NUMBER_OF_ACTIVE_PLAYERS: Int!  // Number of players currently in the game
+    var selectionMatrix: [[Int]]!       // Matrix used to decide direction of answer choice
+    var motionManager: CMMotionManager! // Handles Motion stuff
+
     var quizArray: [Quiz]!
-    var motionManager: CMMotionManager!
-    var selectionMatrix: [[Int]]!
-    
     
     /*** Connection Handling ***/
     var session: MCSession!
@@ -74,8 +74,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)
+        selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
+        /*** Setup Motion Manager ***/
         motionManager = CMMotionManager()
         motionManager.startAccelerometerUpdates()
         motionManager.deviceMotionUpdateInterval = 0.1
@@ -92,7 +93,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                         print("motion error handled with print statement")
                     }
             })
-            
         }
         
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
@@ -106,7 +106,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
-        
         
         /*** Set the level color ***/
         LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0)
@@ -130,6 +129,41 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
     }
     
+    /*** Shake the device to get a random answer choice ***/
+    override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
+        
+        if(shouldShake){
+            
+            if (motion == .motionShake) {
+                
+                let randomChoice = Int(arc4random_uniform(4))
+                
+                switch randomChoice {
+                    
+                case 0:  // A
+                    CURRENT_CHOICE = A_Button
+                    updateSelectionMatrix()
+                    _ = animateChoice(button: A_Button)
+                case 1:  // B
+                    CURRENT_CHOICE = B_Button
+                    updateSelectionMatrix()
+                    _ = animateChoice(button: B_Button)
+                case 2:  // C
+                    CURRENT_CHOICE = C_Button
+                    updateSelectionMatrix()
+                    _ = animateChoice(button: C_Button)
+                case 3:  // D
+                    CURRENT_CHOICE = D_Button
+                    updateSelectionMatrix()
+                    _ = animateChoice(button: D_Button)
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    
     func updateTimer(){
         
         /*** If there is still time in the game ***/
@@ -137,105 +171,115 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
         }
+            
+            /*** The game has ended ***/
         else {
             motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
             Finish_Display_Text.isHidden = false
-            Next_Question_Button.isHidden = false
             questionTimer.invalidate()
             //END GAME
         }
     }
     
     
-    
-    func shiftMatrix(direction: String)
-    {
-        if(direction == "left")
-        {
-
-            if (selectionMatrix [1][0] == 1) {
-                CURRENT_CHOICE = A_Button
-                updateSelectionMatrix()
-                animateChoice(button: A_Button)
-            }
-            else if (selectionMatrix [1][1] == 1) {
-                CURRENT_CHOICE = C_Button
-                updateSelectionMatrix()
-                animateChoice(button: C_Button)
-            }
-        }
-        if(direction == "right")
-        {
-            
-            if (selectionMatrix [0][0] == 1) {
-                CURRENT_CHOICE = B_Button
-                updateSelectionMatrix()
-                animateChoice(button: B_Button)
-            }
-            else if (selectionMatrix [0][1] == 1) {
-                CURRENT_CHOICE = D_Button
-                updateSelectionMatrix()
-                animateChoice(button: D_Button)
-            }
-        }
-        if(direction == "down")
-        {
-            
-            if (selectionMatrix [1][0] == 1) {
-                CURRENT_CHOICE = D_Button
-                updateSelectionMatrix()
-                animateChoice(button: D_Button)
-            }
-            else if (selectionMatrix [0][0] == 1) {
-                CURRENT_CHOICE = C_Button
-                updateSelectionMatrix()
-                animateChoice(button: C_Button)
-            }
-        }
-        if(direction == "up")
-        {
-            
-            if (selectionMatrix [0][1] == 1) {
-                CURRENT_CHOICE = A_Button
-                updateSelectionMatrix()
-                animateChoice(button: A_Button)
-            }
-            else if (selectionMatrix [1][1] == 1) {
-                CURRENT_CHOICE = B_Button
-                updateSelectionMatrix()
-                animateChoice(button: B_Button)
-            }
-        }
+    /*** Helper function to select answer based on shift ***/
+    func shiftMatrix(direction: String) {
         
+        if(direction == "left") {
+            
+            if (selectionMatrix [1][0] == 1) {  // If answer was "B"
+                CURRENT_CHOICE = A_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: A_Button)
+            }
+            else if (selectionMatrix [1][1] == 1) { // If answer was "D"
+                CURRENT_CHOICE = C_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: C_Button)
+            }
+        }
+        if(direction == "right") {
+            
+            if (selectionMatrix [0][0] == 1) { // If answer was "A"
+                CURRENT_CHOICE = B_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: B_Button)
+            }
+            else if (selectionMatrix [0][1] == 1) { // If answer was "C"
+                CURRENT_CHOICE = D_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: D_Button)
+            }
+        }
+        if(direction == "down") {
+            
+            if (selectionMatrix [1][0] == 1) { // If answer was "B"
+                CURRENT_CHOICE = D_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: D_Button)
+            }
+            else if (selectionMatrix [0][0] == 1) { // If answer was "A"
+                CURRENT_CHOICE = C_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: C_Button)
+            }
+        }
+        if(direction == "up") {
+            
+            if (selectionMatrix [0][1] == 1) { // If answer was "C"
+                CURRENT_CHOICE = A_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: A_Button)
+            }
+            else if (selectionMatrix [1][1] == 1) { // If answer was "D"
+                CURRENT_CHOICE = B_Button
+                updateSelectionMatrix()
+                _ = animateChoice(button: B_Button)
+            }
+        }
     }
     
     
     func handleDeviceMotionUpdate(deviceMotion:CMDeviceMotion) {
+        
+        let acceleration = deviceMotion.userAcceleration
         let attitude = deviceMotion.attitude
         let roll = degrees(radians: attitude.roll)
         let pitch = degrees(radians: attitude.pitch)
-        // var yaw = degrees(radians: attitude.yaw)
+        let yaw = degrees(radians: attitude.yaw)
         
         
         /*** We only want to be able to switch by tilting if an answer has been chosen ***/
         if(CURRENT_CHOICE != nil)
         {
-            if(roll > 35)
+            print("Roll: \(roll) Pitch: \(pitch) Yaw: \(yaw) Acceleration: \(acceleration.z)")
+            if(roll > 45.0)
             {
                 shiftMatrix(direction: "right")
             }
-            else if(roll < -35)
+            else if(roll < -45.0)
             {
                 shiftMatrix(direction: "left")
             }
-            else if(pitch < -35)
+            else if(pitch < -45.0)
             {
-                shiftMatrix(direction: "up")
+                if(pitch < -75.0) {
+                    submitAnswer(CURRENT_CHOICE!)
+                } else {
+                    shiftMatrix(direction: "up")
+                }
             }
-            else if(pitch > 35)
+            else if(pitch > 45.0)
             {
-                shiftMatrix(direction: "down")
+                if(pitch > 75.0) {
+                    submitAnswer(CURRENT_CHOICE!)
+                } else {
+                    shiftMatrix(direction: "down")
+                }
+            }
+            if (acceleration.z < -1.0) {
+                submitAnswer(CURRENT_CHOICE!)
             }
         }
     }
@@ -292,7 +336,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             selectionMatrix[1][1] = 1
         default:
             break
-        }        
+        }
     }
     
     func displayQuestion(question: String, answers: [String: String]!){
@@ -363,8 +407,17 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
-    
     @IBAction func submitAnswer(_ sender: Any) {
+        
+        Submit_Button.isHidden = true
+        motionManager.stopDeviceMotionUpdates()
+        A_Button.isUserInteractionEnabled = false
+        B_Button.isUserInteractionEnabled = false
+        C_Button.isUserInteractionEnabled = false
+        D_Button.isUserInteractionEnabled = false
+        shouldShake = false
+        
+        
         let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
         displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         
@@ -379,13 +432,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         } catch {
             print("error sending answer")
         }
-        
-        
-        // TODO: Handle Answer Choice
-        
     }
-    
-    
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         dismiss(animated: true, completion: nil)
@@ -396,9 +443,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL, withError error: Error?) {
-        
     }
-    
     
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
     }
@@ -409,8 +454,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         
         // Called when a connected peer changes state (for example, goes offline)
-        
-        
         
         switch state {
         case MCSessionState.connected:
