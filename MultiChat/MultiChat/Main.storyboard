@@ -67,6 +67,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="SingleOrMulti" destination="MJ6-yZ-EHj" id="JRa-zg-Gpg"/>
                         <segue destination="7pW-SS-yrH" kind="show" identifier="quiz" id="xhX-o5-28v"/>
                     </connections>
                 </viewController>

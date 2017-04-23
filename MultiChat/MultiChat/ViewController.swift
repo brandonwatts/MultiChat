@@ -9,6 +9,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var browser: MCBrowserViewController!
     var assistant: MCAdvertiserAssistant!
     
+    @IBOutlet weak var SingleOrMulti: UISegmentedControl!
     var quizNum = 0
     var quizArray = [Quiz]()
     
@@ -29,6 +30,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         browser.delegate = self
         browser.maximumNumberOfPeers = 4
         
+        
+        
         obtainQuizPage()
         
     }
@@ -38,11 +41,38 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     @IBAction func startQuiz(_ sender: Any) {
-        performSegue(withIdentifier: "quiz", sender: nil)
+        
+        // we need to separate multi from single
+        if SingleOrMulti.selectedSegmentIndex == 0 {
+            performSegue(withIdentifier: "quiz", sender: nil)
+        }
+        
+        else if session.connectedPeers.count > 1 && SingleOrMulti.selectedSegmentIndex == 1 {
+            performSegue(withIdentifier: "quiz", sender: nil)
+        }
+        else{
+            alertUser(alert: "Get some friends, need atleast two users for this option!")
+        }
+        
+        
+        
+        
         
         // in this we need to check to make sure
 //        session.connectedPeers.count > 0
         // to move to multiple quiz place
+        
+    }
+    
+    func alertUser(alert: String) {
+        
+        let alert = UIAlertController(title: "Invalid Option", message: alert, preferredStyle: .alert)
+        let myAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+//        let second = UIAlertAction(title: "Cancel", style: .cancel, handler: { action in self.performSegue(withIdentifier: "homeScreen", sender: self)});
+        
+        alert.addAction(myAction)
+//        alert.addAction(second)
+        present(alert, animated: true, completion: nil)
         
     }
     // we need to pass this session on over to the quiz, to keep our connections

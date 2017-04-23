@@ -89,6 +89,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                         self.handleDeviceMotionUpdate(deviceMotion: deviceMotion!)
                     } else {
                         //handle the error
+                        print("motion error handled with print statement")
                     }
             })
             
