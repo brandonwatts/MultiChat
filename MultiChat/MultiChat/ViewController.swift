@@ -43,11 +43,21 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBAction func startQuiz(_ sender: Any) {
         
         // we need to separate multi from single
+        
+        print("peers connected: \(session.connectedPeers.count)")
+        
         if SingleOrMulti.selectedSegmentIndex == 0 {
             performSegue(withIdentifier: "quiz", sender: nil)
         }
         
-        else if session.connectedPeers.count > 1 && SingleOrMulti.selectedSegmentIndex == 1 {
+        else if session.connectedPeers.count >= 1 && SingleOrMulti.selectedSegmentIndex == 1 {
+            let send = ["segue": "quiz"] as [String: Any]
+            let data = NSKeyedArchiver.archivedData(withRootObject: send)
+            do {
+                try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+            } catch {
+                print("sending error")
+            }
             performSegue(withIdentifier: "quiz", sender: nil)
         }
         else{
@@ -59,7 +69,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func alertUser(alert: String) {
         
         let alert = UIAlertController(title: "Invalid Option", message: alert, preferredStyle: .alert)
-        let myAction = UIAlertAction(title: "OK", style: .default, handler: nil)        
+        let myAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(myAction)
         present(alert, animated: true, completion: nil)
         
@@ -96,8 +106,11 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         // this needs to be run on the main thread
         DispatchQueue.main.async(execute: {
             
-            if (NSKeyedUnarchiver.unarchiveObject(with: data) as? String) != nil{
+            if let info = NSKeyedUnarchiver.unarchiveObject(with: data) as? [String: Any]{
                 //self.updateChatView(newText: receivedString, id: peerID)
+                if let seg = info["segue"] as? String {
+                self.performSegue(withIdentifier: seg, sender: nil)
+                }
             }
             
         })

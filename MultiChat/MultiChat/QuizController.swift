@@ -435,9 +435,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             if let player = NSKeyedUnarchiver.unarchiveObject(with: data) as? [String: Any] {
                 
                 // need to create the other user each time information is sent?
-                let playId = player["pid"] as! String
-                let playAns = player["answer"] as! String
-                let playScore = player["score"] as! Int
+                if let playId = player["pid"] as? String {
+                    if let playAns = player["answer"] as? String {
+                        if let playScore = player["score"] as? Int {
                 
                 // we can now use this info to update each users choice.
                 // search through array?!
@@ -451,6 +451,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                         self.displayAnswer(forPlayer: tempCount, withAnswer: user.getAnswer())
                     }
                     tempCount += 1
+                }
+                        }
+                    }
                 }
                 
             }
