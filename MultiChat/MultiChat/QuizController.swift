@@ -10,52 +10,78 @@ import UIKit
 
 class QuizController: UIViewController {
 
+    /*** Answer Buttons ***/
     @IBOutlet weak var A_Button: UIButton!
     @IBOutlet weak var B_Button: UIButton!
     @IBOutlet weak var C_Button: UIButton!
     @IBOutlet weak var D_Button: UIButton!
-    @IBOutlet weak var Submit_Button: UIButton!
-    @IBOutlet weak var levelTimer: KDCircularProgress!
-    @IBOutlet weak var timeLabel: UILabel!
+    
+    /*** Player Scores ***/
     @IBOutlet weak var Player_1_Score: UILabel!
     @IBOutlet weak var Player_2_Score: UILabel!
     @IBOutlet weak var Player_3_Score: UILabel!
     @IBOutlet weak var Player_4_Score: UILabel!
-    @IBOutlet weak var Question_Text: UILabel!
-    @IBOutlet weak var Finish_Display_Text: UILabel!
-    @IBOutlet weak var Next_Question_Button: UIImageView!
+    
+    /*** Player Avatars ***/
+    @IBOutlet weak var Player_1_Avatar: UIImageView!
+    @IBOutlet weak var Player_2_Avatar: UIImageView!
+    @IBOutlet weak var Player_3_Avatar: UIImageView!
+    @IBOutlet weak var Player_4_Avatar: UIImageView!
+
+    /*** Player Answers ***/
     @IBOutlet weak var Player_1_Answer: UILabel!
     @IBOutlet weak var Player_2_Answer: UILabel!
     @IBOutlet weak var Player_3_Answer: UILabel!
     @IBOutlet weak var Player_4_Answer: UILabel!
+    
+    /*** Players Speech Bubbles ***/
     @IBOutlet weak var Player_1_Speech_Bubble: UIView!
     @IBOutlet weak var Player_2_Speech_Bubble: UIView!
     @IBOutlet weak var Player_3_Speech_Bubble: UIView!
     @IBOutlet weak var Player_4_Speech_Bubble: UIView!
     
+    
+    @IBOutlet weak var Question_Text: UILabel!
+    @IBOutlet weak var Finish_Display_Text: UILabel!
+    @IBOutlet weak var Next_Question_Button: UIImageView!
+    @IBOutlet weak var Submit_Button: UIButton!
+    @IBOutlet weak var levelTimer: KDCircularProgress!
+    @IBOutlet weak var timeLabel: UILabel!
+    
     var LEVEL_COLOR: UIColor?  // Current Color Scheme of the Level
     var CURRENT_CHOICE: UIButton? // Current Answer Choice Selected by the User
     var questionTimer: Timer!
-    var QUESTION_TIME = 25
-    
+    var QUESTION_TIME = 20
+    var NUMBER_OF_ACTIVE_PLAYERS = 3
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
+
+        
         LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0) // Nice Blue Color
         levelTimer.angle = 360
         timeLabel.text = String(QUESTION_TIME)
         levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
         questionTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+        
+        for index in (0 ... 3) {
+            if(index > NUMBER_OF_ACTIVE_PLAYERS - 1){
+                avatars[index].image = UIImage(named: "Blank_Avatar")
+            }
+        }
     }
     
     func updateTimer(){
-        if (QUESTION_TIME != 0)
-        {
+        if (QUESTION_TIME != 0) {
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
         }
-        else{
+        else {
             questionTimer.invalidate()
+            Finish_Display_Text.isHidden = false
+            Next_Question_Button.isHidden = false
             //END GAME
         }
     }
