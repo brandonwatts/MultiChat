@@ -31,6 +31,9 @@ class Player {
         return playerId
     }
     
+    func getAnswer() -> String {
+        return answer
+    }
     
     
     

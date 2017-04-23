@@ -60,7 +60,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var peerID: MCPeerID!
     
     var browser: MCBrowserViewController!
-    var assistant: MCAdvertiserAssistant!
+    var assistant: MCAdvertiserAssistant! // not sure if we still need to advertise here.
     
     var playerArray = [Player]()
 
@@ -71,11 +71,10 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
         
-        
         self.browser = MCBrowserViewController(serviceType: "multichat", session: session)
         session.delegate = self
         browser.delegate = self
-       
+        
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
 
@@ -166,6 +165,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         return changedButton
     }
     
+    // note: users currently will be displayed by their index in playerArray
     func displayAnswer(forPlayer: Int, withAnswer: String) {
         
         switch(forPlayer){
@@ -275,7 +275,18 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 let playScore = player["score"] as! Int
                 
                 // we can now use this info to update each users choice.
-                
+                // search through array?! 
+                var tempCount = 2
+                for user in self.playerArray {
+                    let id = user.getPlayerId()
+                    if playId == id {
+                        user.updateAnswer(ans: playAns)
+                        user.updatePlayerScore(score: playScore)
+                        // needs testing...
+                        self.displayAnswer(forPlayer: tempCount, withAnswer: user.getAnswer())
+                    }
+                    tempCount += 1
+                }
                 
             }
             
