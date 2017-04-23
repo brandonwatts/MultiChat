@@ -8,9 +8,11 @@
 
 import UIKit
 import MultipeerConnectivity
+import CoreMotion
+
 
 class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate {
-
+    
     /*** Answer Buttons ***/
     @IBOutlet weak var A_Button: UIButton!
     @IBOutlet weak var B_Button: UIButton!
@@ -28,7 +30,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBOutlet weak var Player_2_Avatar: UIImageView!
     @IBOutlet weak var Player_3_Avatar: UIImageView!
     @IBOutlet weak var Player_4_Avatar: UIImageView!
-
+    
     /*** Player Answers ***/
     @IBOutlet weak var Player_1_Answer: UILabel!
     @IBOutlet weak var Player_2_Answer: UILabel!
@@ -55,6 +57,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var QUESTION_TIME = 20
     var NUMBER_OF_ACTIVE_PLAYERS: Int!
     var quizArray: [Quiz]!
+    var motionManager: CMMotionManager!
+    var selectionMatrix: [[Int]]!
+    
     
     /*** Connection Handling ***/
     var session: MCSession!
@@ -64,11 +69,30 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var assistant: MCAdvertiserAssistant! // not sure if we still need to advertise here.
     
     var playerArray = [Player]()
-
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)
+        
+        motionManager = CMMotionManager()
+        motionManager.startAccelerometerUpdates()
+        motionManager.deviceMotionUpdateInterval = 0.1
+        
+        if motionManager.isAccelerometerAvailable == true {
+            motionManager.startDeviceMotionUpdates(
+                to: OperationQueue.current!, withHandler: {
+                    (deviceMotion, error) -> Void in
+                    
+                    if(error == nil) {
+                        self.handleDeviceMotionUpdate(deviceMotion: deviceMotion!)
+                    } else {
+                        //handle the error
+                    }
+            })
+            
+        }
         
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
         
@@ -82,14 +106,14 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
         
-
+        
         /*** Set the level color ***/
         LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0)
         
         /*** The timer starts all the way filled at 360 degrees and 20 seconds on the clock **/
         levelTimer.angle = 360
         timeLabel.text = String(QUESTION_TIME)
-
+        
         /*** Every second we decrease the timer by 1 and take a little off the display ***/
         levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
         questionTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
@@ -106,25 +130,125 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func updateTimer(){
+        
+        /*** If there is still time in the game ***/
         if (QUESTION_TIME != 0) {
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
         }
         else {
-            questionTimer.invalidate()
+            motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
             Finish_Display_Text.isHidden = false
             Next_Question_Button.isHidden = false
+            questionTimer.invalidate()
             //END GAME
         }
     }
     
-    func checkCorrectness() {
-//        if CURRENT_CHOICE == quizArray[0].questionArray[0].getCorrect() {
-        
-//        }
-    }
+    
+    
+    func shiftMatrix(direction: String)
+    {
+        if(direction == "left")
+        {
 
+            if (selectionMatrix [1][0] == 1) {
+                CURRENT_CHOICE = A_Button
+                updateSelectionMatrix()
+                animateChoice(button: A_Button)
+            }
+            else if (selectionMatrix [1][1] == 1) {
+                CURRENT_CHOICE = C_Button
+                updateSelectionMatrix()
+                animateChoice(button: C_Button)
+            }
+        }
+        if(direction == "right")
+        {
+            
+            if (selectionMatrix [0][0] == 1) {
+                CURRENT_CHOICE = B_Button
+                updateSelectionMatrix()
+                animateChoice(button: B_Button)
+            }
+            else if (selectionMatrix [0][1] == 1) {
+                CURRENT_CHOICE = D_Button
+                updateSelectionMatrix()
+                animateChoice(button: D_Button)
+            }
+        }
+        if(direction == "down")
+        {
+            
+            if (selectionMatrix [1][0] == 1) {
+                CURRENT_CHOICE = D_Button
+                updateSelectionMatrix()
+                animateChoice(button: D_Button)
+            }
+            else if (selectionMatrix [0][0] == 1) {
+                CURRENT_CHOICE = C_Button
+                updateSelectionMatrix()
+                animateChoice(button: C_Button)
+            }
+        }
+        if(direction == "up")
+        {
+            
+            if (selectionMatrix [0][1] == 1) {
+                CURRENT_CHOICE = A_Button
+                updateSelectionMatrix()
+                animateChoice(button: A_Button)
+            }
+            else if (selectionMatrix [1][1] == 1) {
+                CURRENT_CHOICE = B_Button
+                updateSelectionMatrix()
+                animateChoice(button: B_Button)
+            }
+        }
+        
+    }
+    
+    
+    func handleDeviceMotionUpdate(deviceMotion:CMDeviceMotion) {
+        let attitude = deviceMotion.attitude
+        let roll = degrees(radians: attitude.roll)
+        let pitch = degrees(radians: attitude.pitch)
+        // var yaw = degrees(radians: attitude.yaw)
+        
+        
+        /*** We only want to be able to switch by tilting if an answer has been chosen ***/
+        if(CURRENT_CHOICE != nil)
+        {
+            if(roll > 35)
+            {
+                shiftMatrix(direction: "right")
+            }
+            else if(roll < -35)
+            {
+                shiftMatrix(direction: "left")
+            }
+            else if(pitch < -35)
+            {
+                shiftMatrix(direction: "up")
+            }
+            else if(pitch > 35)
+            {
+                shiftMatrix(direction: "down")
+            }
+        }
+    }
+    
+    func degrees(radians:Double) -> Double {
+        return 180 / .pi * radians
+    }
+    
+    func checkCorrectness() {
+        //        if CURRENT_CHOICE == quizArray[0].questionArray[0].getCorrect() {
+        
+        //        }
+    }
+    
     // may be easier to set each button to tag then just check answer that way.
     @IBAction func selectAnswer(_ sender: UIButton) {
         switch sender {
@@ -137,8 +261,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             CURRENT_CHOICE = B_Button
             break
         case C_Button:
-             C_Button = animateChoice(button: C_Button)
-             CURRENT_CHOICE = C_Button
+            C_Button = animateChoice(button: C_Button)
+            CURRENT_CHOICE = C_Button
             break
         case D_Button:
             D_Button = animateChoice(button: D_Button)
@@ -147,6 +271,27 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         default:
             break
         }
+        updateSelectionMatrix()
+    }
+    
+    func updateSelectionMatrix(){
+        let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
+        let answer = CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!)
+        
+        selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)
+        
+        switch answer! {
+        case "A":
+            selectionMatrix[0][0] = 1
+        case "B":
+            selectionMatrix[1][0] = 1
+        case "C":
+            selectionMatrix[0][1] = 1
+        case "D":
+            selectionMatrix[1][1] = 1
+        default:
+            break
+        }        
     }
     
     func displayQuestion(question: String, answers: [String: String]!){
@@ -171,7 +316,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         C_Button.setTitleColor(LEVEL_COLOR, for: .normal)
         D_Button.setBackgroundImage(orignialBackground, for: .normal)
         D_Button.setTitleColor(LEVEL_COLOR, for: .normal)
-
+        
         /***** Update our new button to be the current choice *****/
         let changedButton: UIButton = button
         let selectedImage = UIImage(named: "Selected_button")
@@ -252,7 +397,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL, withError error: Error?) {
         
     }
-
+    
     
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
     }
@@ -294,7 +439,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 let playScore = player["score"] as! Int
                 
                 // we can now use this info to update each users choice.
-                // search through array?! 
+                // search through array?!
                 var tempCount = 2
                 for user in self.playerArray {
                     let id = user.getPlayerId()
@@ -316,5 +461,5 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
 }
