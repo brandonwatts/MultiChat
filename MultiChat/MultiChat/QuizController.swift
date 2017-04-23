@@ -148,7 +148,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         Question_Text.text = question;
         A_Button.setTitle("A) \(answers["A"]!)", for: .normal)
         B_Button.setTitle("B) \(answers["B"]!)", for: .normal)
-        C_Button.setTitle("C \(answers["C"]!)", for: .normal)
+        C_Button.setTitle("C) \(answers["C"]!)", for: .normal)
         D_Button.setTitle("D) \(answers["D"]!)", for: .normal)
     }
     
