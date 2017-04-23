@@ -54,6 +54,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var CURRENT_CHOICE: UIButton? // Current Answer Choice Selected by the User
     var questionTimer: Timer!
     var QUESTION_TIME = 20
+    var shouldShake = true
     var NUMBER_OF_ACTIVE_PLAYERS: Int!
     var quizArray: [Quiz]!
     var motionManager: CMMotionManager!
@@ -132,30 +133,33 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     /*** Shake the device to get a random answer choice ***/
     override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
         
-        if (motion == .motionShake) {
+        if(shouldShake){
             
-            let randomChoice = Int(arc4random_uniform(4))
-            
-            switch randomChoice {
+            if (motion == .motionShake) {
                 
-            case 0:  // A
-                CURRENT_CHOICE = A_Button
-                updateSelectionMatrix()
-                _ = animateChoice(button: A_Button)
-            case 1:  // B
-                CURRENT_CHOICE = B_Button
-                updateSelectionMatrix()
-                _ = animateChoice(button: B_Button)
-            case 2:  // C
-                CURRENT_CHOICE = C_Button
-                updateSelectionMatrix()
-                _ = animateChoice(button: C_Button)
-            case 3:  // D
-                CURRENT_CHOICE = D_Button
-                updateSelectionMatrix()
-                _ = animateChoice(button: D_Button)
-            default:
-                break
+                let randomChoice = Int(arc4random_uniform(4))
+                
+                switch randomChoice {
+                    
+                case 0:  // A
+                    CURRENT_CHOICE = A_Button
+                    updateSelectionMatrix()
+                    _ = animateChoice(button: A_Button)
+                case 1:  // B
+                    CURRENT_CHOICE = B_Button
+                    updateSelectionMatrix()
+                    _ = animateChoice(button: B_Button)
+                case 2:  // C
+                    CURRENT_CHOICE = C_Button
+                    updateSelectionMatrix()
+                    _ = animateChoice(button: C_Button)
+                case 3:  // D
+                    CURRENT_CHOICE = D_Button
+                    updateSelectionMatrix()
+                    _ = animateChoice(button: D_Button)
+                default:
+                    break
+                }
             }
         }
     }
@@ -168,8 +172,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
         }
-        
-        /*** The game has ended ***/
+            
+            /*** The game has ended ***/
         else {
             motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
@@ -404,8 +408,17 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
-    
     @IBAction func submitAnswer(_ sender: Any) {
+        
+        Submit_Button.isHidden = true
+        motionManager.stopDeviceMotionUpdates()
+        A_Button.isUserInteractionEnabled = false
+        B_Button.isUserInteractionEnabled = false
+        C_Button.isUserInteractionEnabled = false
+        D_Button.isUserInteractionEnabled = false
+        shouldShake = false
+        
+        
         let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
         displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         
@@ -426,8 +439,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
     }
     
-    
-    
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         dismiss(animated: true, completion: nil)
     }
@@ -437,9 +448,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL, withError error: Error?) {
-        
     }
-    
     
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
     }
