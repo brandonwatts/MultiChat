@@ -46,7 +46,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     @IBOutlet weak var Question_Text: UILabel!
     @IBOutlet weak var Finish_Display_Text: UILabel!
-    @IBOutlet weak var Next_Question_Button: UIImageView!
     @IBOutlet weak var Submit_Button: UIButton!
     @IBOutlet weak var levelTimer: KDCircularProgress!
     @IBOutlet weak var timeLabel: UILabel!
@@ -175,7 +174,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
             Finish_Display_Text.isHidden = false
-            Next_Question_Button.isHidden = false
             questionTimer.invalidate()
             //END GAME
         }
@@ -241,30 +239,44 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     
     func handleDeviceMotionUpdate(deviceMotion:CMDeviceMotion) {
+        
+        let acceleration = deviceMotion.userAcceleration
         let attitude = deviceMotion.attitude
         let roll = degrees(radians: attitude.roll)
         let pitch = degrees(radians: attitude.pitch)
-        // var yaw = degrees(radians: attitude.yaw)
+        let yaw = degrees(radians: attitude.yaw)
         
         
         /*** We only want to be able to switch by tilting if an answer has been chosen ***/
         if(CURRENT_CHOICE != nil)
         {
-            if(roll > 35)
+            print("Roll: \(roll) Pitch: \(pitch) Yaw: \(yaw) Acceleration: \(acceleration.z)")
+            if(roll > 45.0)
             {
                 shiftMatrix(direction: "right")
             }
-            else if(roll < -35)
+            else if(roll < -45.0)
             {
                 shiftMatrix(direction: "left")
             }
-            else if(pitch < -35)
+            else if(pitch < -45.0)
             {
-                shiftMatrix(direction: "up")
+                if(pitch < -75.0) {
+                    submitAnswer(CURRENT_CHOICE!)
+                } else {
+                    shiftMatrix(direction: "up")
+                }
             }
-            else if(pitch > 35)
+            else if(pitch > 45.0)
             {
-                shiftMatrix(direction: "down")
+                if(pitch > 75.0) {
+                    submitAnswer(CURRENT_CHOICE!)
+                } else {
+                    shiftMatrix(direction: "down")
+                }
+            }
+            if (acceleration.z < -1.0) {
+                submitAnswer(CURRENT_CHOICE!)
             }
         }
     }
