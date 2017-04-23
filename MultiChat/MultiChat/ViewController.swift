@@ -20,12 +20,14 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
         self.session = MCSession(peer: peerID)
         
-        self.browser = MCBrowserViewController(serviceType: "MultiChat", session: session)
-        self.assistant = MCAdvertiserAssistant(serviceType: "MultiChat", discoveryInfo: nil, session: session)
+        self.browser = MCBrowserViewController(serviceType: "multichat", session: session)
+        self.assistant = MCAdvertiserAssistant(serviceType: "multichat", discoveryInfo: nil, session: session)
+        
         
         assistant.start()
         session.delegate = self
         browser.delegate = self
+        browser.maximumNumberOfPeers = 4
         
         obtainQuizPage()
         
@@ -37,6 +39,24 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     @IBAction func startQuiz(_ sender: Any) {
         performSegue(withIdentifier: "quiz", sender: nil)
+        
+        // in this we need to check to make sure
+//        session.connectedPeers.count > 0
+        // to move to multiple quiz place
+        
+    }
+    // we need to pass this session on over to the quiz, to keep our connections
+    // to check via terminal if connections (browse for services) are available or being advertised type
+    //
+    // dns-sd -B _services._dns-sd._udp
+    //
+    // everything looks fine on this end.
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "quiz" {
+            if let multi = segue.destination as? QuizController {
+                multi.session = session as MCSession
+            }
+        }
     }
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
@@ -77,10 +97,10 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         switch state {
         case MCSessionState.connected:
-            if session.connectedPeers.count == 4 {
-                assistant.stop()
-                browser.browser?.stopBrowsingForPeers()
-            }
+//            if session.connectedPeers.count == 4 {
+//                assistant.stop()
+//                browser.browser?.stopBrowsingForPeers()
+//            }
             print("Connected: \(peerID.displayName)")
             
         case MCSessionState.connecting:
@@ -88,11 +108,11 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             
         case MCSessionState.notConnected:
             print("Not Connected: \(peerID.displayName)")
-            if session.connectedPeers.count <= 3 {
-                self.assistant.start()
-                self.browser.browser?.startBrowsingForPeers()
-                
-            }
+//            if session.connectedPeers.count <= 3 {
+//                self.assistant.start()
+//                self.browser.browser?.startBrowsingForPeers()
+            
+//            }
             
         }
         

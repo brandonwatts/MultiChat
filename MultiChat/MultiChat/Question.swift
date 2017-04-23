@@ -2,7 +2,7 @@
 //  Question.swift
 //  MultiChat
 //
-//  Created by Ben on 4/22/17.
+//  Created by Ben Leach on 4/22/17.
 //  Copyright © 2017 Brandon Watts. All rights reserved.
 //
 

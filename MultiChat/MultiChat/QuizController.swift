@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import MultipeerConnectivity
 
-class QuizController: UIViewController {
+class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessionDelegate {
 
     /*** Answer Buttons ***/
     @IBOutlet weak var A_Button: UIButton!
@@ -54,9 +55,27 @@ class QuizController: UIViewController {
     var QUESTION_TIME = 20
     var NUMBER_OF_ACTIVE_PLAYERS = 3
     
+    /*** Connection Handling ***/
+    var session: MCSession!
+    var peerID: MCPeerID!
+    
+    var browser: MCBrowserViewController!
+    var assistant: MCAdvertiserAssistant!
+    
+    var playerArray = [Player]()
+
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.peerID = MCPeerID(displayName: UIDevice.current.name)
+        
+        
+        self.browser = MCBrowserViewController(serviceType: "multichat", session: session)
+        session.delegate = self
+        browser.delegate = self
+       
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
 
@@ -171,10 +190,101 @@ class QuizController: UIViewController {
         }
     }
     
+    // hold our players, referenced by index
+    func addPlayer(player: Player) {
+        playerArray.append(player)
+    }
+    
+    func addPlayersToArray() {
+        for users in session.connectedPeers {
+            playerArray.append(Player(pid: users.displayName))
+        }
+    }
+    
+    
     @IBAction func submitAnswer(_ sender: Any) {
         let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
         displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
+        
+        // send this data to each player
+        // read in below
+        let sending = ["pid": peerID.displayName, "answer": CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!) as Any, "score": 0] as [String : Any]
+        
+        let data = NSKeyedArchiver.archivedData(withRootObject: sending)
+        
+        do {
+            try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+        } catch {
+            print("error sending answer")
+        }
+        
+        
         // TODO: Handle Answer Choice
+    }
+    
+    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL, withError error: Error?) {
+        
+    }
+
+    
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+    }
+    
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID){
+    }
+    
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        
+        // Called when a connected peer changes state (for example, goes offline)
+        
+        
+        
+        switch state {
+        case MCSessionState.connected:
+            print("Connected: \(peerID.displayName)")
+            
+        case MCSessionState.connecting:
+            print("Connecting: \(peerID.displayName)")
+            
+        case MCSessionState.notConnected:
+            print("Not Connected: \(peerID.displayName)")
+            // take back to home?
+        }
+        
+    }
+    
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        
+        // this needs to be run on the main thread
+        DispatchQueue.main.async(execute: {
+            
+            if let player = NSKeyedUnarchiver.unarchiveObject(with: data) as? [String: Any] {
+                
+                // need to create the other user each time information is sent?
+                let playId = player["pid"] as! String
+                let playAns = player["ans"] as! String
+                let playScore = player["score"] as! Int
+                
+                // we can now use this info to update each users choice.
+                
+                
+            }
+            
+        })
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
 
 }
