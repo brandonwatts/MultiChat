@@ -55,6 +55,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         if segue.identifier == "quiz" {
             if let multi = segue.destination as? QuizController {
                 multi.session = session as MCSession
+                multi.quizArray = self.quizArray
             }
         }
     }

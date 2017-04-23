@@ -54,6 +54,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var questionTimer: Timer!
     var QUESTION_TIME = 20
     var NUMBER_OF_ACTIVE_PLAYERS = 3
+    var quizArray: [Quiz]!
     
     /*** Connection Handling ***/
     var session: MCSession!
@@ -77,6 +78,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
+        
 
         /*** Set the level color ***/
         LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0)
@@ -105,12 +107,20 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
         else {
             questionTimer.invalidate()
+            checkCorrectness()
             Finish_Display_Text.isHidden = false
             Next_Question_Button.isHidden = false
             //END GAME
         }
     }
+    
+    func checkCorrectness() {
+//        if CURRENT_CHOICE == quizArray[0].questionArray[0].getCorrect() {
+        
+//        }
+    }
 
+    // may be easier to set each button to tag then just check answer that way.
     @IBAction func selectAnswer(_ sender: UIButton) {
         switch sender {
         case A_Button:
@@ -220,7 +230,10 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         
         // TODO: Handle Answer Choice
+        
     }
+    
+    
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         dismiss(animated: true, completion: nil)

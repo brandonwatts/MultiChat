@@ -21,6 +21,8 @@ class Question {
         self.questionNumber = qNum
     }
     
-    
+    func getCorrect() -> String {
+        return correct
+    }
     
 }
