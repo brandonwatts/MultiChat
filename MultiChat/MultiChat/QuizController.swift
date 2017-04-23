@@ -50,16 +50,16 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBOutlet weak var levelTimer: KDCircularProgress!
     @IBOutlet weak var timeLabel: UILabel!
     
-    var LEVEL_COLOR: UIColor?  // Current Color Scheme of the Level
-    var CURRENT_CHOICE: UIButton? // Current Answer Choice Selected by the User
-    var questionTimer: Timer!
-    var QUESTION_TIME = 20
-    var shouldShake = true
-    var NUMBER_OF_ACTIVE_PLAYERS: Int!
+    var LEVEL_COLOR: UIColor?           // Current Color Scheme of the Level
+    var CURRENT_CHOICE: UIButton?       // Current Answer Choice Selected by the User
+    var questionTimer: Timer!           // Timer for the current Question
+    var QUESTION_TIME = 20              // Alloted time to answer the question
+    var shouldShake = true              // Variable to allow the user to shake the device
+    var NUMBER_OF_ACTIVE_PLAYERS: Int!  // Number of players currently in the game
+    var selectionMatrix: [[Int]]!       // Matrix used to decide direction of answer choice
+    var motionManager: CMMotionManager! // Handles Motion stuff
+
     var quizArray: [Quiz]!
-    var motionManager: CMMotionManager!
-    var selectionMatrix: [[Int]]!
-    
     
     /*** Connection Handling ***/
     var session: MCSession!
@@ -74,8 +74,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)
+        selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
+        /*** Setup Motion Manager ***/
         motionManager = CMMotionManager()
         motionManager.startAccelerometerUpdates()
         motionManager.deviceMotionUpdateInterval = 0.1
@@ -92,7 +93,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                         print("motion error handled with print statement")
                     }
             })
-            
         }
         
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
@@ -106,7 +106,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
-        
         
         /*** Set the level color ***/
         LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0)
@@ -433,10 +432,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         } catch {
             print("error sending answer")
         }
-        
-        
-        // TODO: Handle Answer Choice
-        
     }
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
@@ -459,8 +454,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         
         // Called when a connected peer changes state (for example, goes offline)
-        
-        
         
         switch state {
         case MCSessionState.connected:
