@@ -19,8 +19,9 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
         self.session = MCSession(peer: peerID)
-        self.browser = MCBrowserViewController(serviceType: "chat", session: session)
-        self.assistant = MCAdvertiserAssistant(serviceType: "chat", discoveryInfo: nil, session: session)
+        
+        self.browser = MCBrowserViewController(serviceType: "MultiChat", session: session)
+        self.assistant = MCAdvertiserAssistant(serviceType: "MultiChat", discoveryInfo: nil, session: session)
         
         assistant.start()
         session.delegate = self
@@ -72,8 +73,14 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         // Called when a connected peer changes state (for example, goes offline)
         
+        
+        
         switch state {
         case MCSessionState.connected:
+            if session.connectedPeers.count == 4 {
+                assistant.stop()
+                browser.browser?.stopBrowsingForPeers()
+            }
             print("Connected: \(peerID.displayName)")
             
         case MCSessionState.connecting:
@@ -81,6 +88,12 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             
         case MCSessionState.notConnected:
             print("Not Connected: \(peerID.displayName)")
+            if session.connectedPeers.count <= 3 {
+                self.assistant.start()
+                self.browser.browser?.startBrowsingForPeers()
+                
+            }
+            
         }
         
     }
