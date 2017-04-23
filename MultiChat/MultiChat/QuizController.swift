@@ -53,7 +53,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var CURRENT_CHOICE: UIButton? // Current Answer Choice Selected by the User
     var questionTimer: Timer!
     var QUESTION_TIME = 20
-    var NUMBER_OF_ACTIVE_PLAYERS = 3
+    var NUMBER_OF_ACTIVE_PLAYERS: Int!
     var quizArray: [Quiz]!
     
     /*** Connection Handling ***/
@@ -76,6 +76,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         session.delegate = self
         browser.delegate = self
         
+        addPlayersToArray()
+        NUMBER_OF_ACTIVE_PLAYERS = playerArray.count
+        
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
         
@@ -93,11 +96,13 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         /*** Logic used to place Blank Avatars if the game is not full ***/
         let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
-        for index in (0 ... 3) {
-            if(index > NUMBER_OF_ACTIVE_PLAYERS - 1) {
+        for index in (1 ... 3) {
+            if(index > NUMBER_OF_ACTIVE_PLAYERS) {
                 avatars[index].image = UIImage(named: "Blank_Avatar")
             }
         }
+        
+        
     }
     
     func updateTimer(){
@@ -201,6 +206,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     // hold our players, referenced by index
+    // not in use currently.
     func addPlayer(player: Player) {
         playerArray.append(player)
     }
@@ -284,7 +290,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 
                 // need to create the other user each time information is sent?
                 let playId = player["pid"] as! String
-                let playAns = player["ans"] as! String
+                let playAns = player["answer"] as! String
                 let playScore = player["score"] as! Int
                 
                 // we can now use this info to update each users choice.
