@@ -58,6 +58,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var NUMBER_OF_ACTIVE_PLAYERS: Int!  // Number of players currently in the game
     var selectionMatrix: [[Int]]!       // Matrix used to decide direction of answer choice
     var motionManager: CMMotionManager! // Handles Motion stuff
+    var singlePlayerMode: Bool?
 
     var quizArray: [Quiz]!
     
@@ -102,7 +103,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         browser.delegate = self
         
         addPlayersToArray()
-        NUMBER_OF_ACTIVE_PLAYERS = playerArray.count
+        NUMBER_OF_ACTIVE_PLAYERS = singlePlayerMode! ? 0 : playerArray.count
         
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
