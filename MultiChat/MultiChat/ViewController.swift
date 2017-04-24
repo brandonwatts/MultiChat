@@ -46,7 +46,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         print("peers connected: \(session.connectedPeers.count)")
         
-        if SingleOrMulti.selectedSegmentIndex == 0 {
+        if SingleOrMulti.selectedSegmentIndex == 0 && session.connectedPeers.count == 0 {
             performSegue(withIdentifier: "quiz", sender: nil)
         }
         
