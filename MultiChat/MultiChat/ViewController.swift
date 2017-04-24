@@ -85,6 +85,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             if let multi = segue.destination as? QuizController {
                 multi.session = session as MCSession
                 multi.quizArray = self.quizArray
+                multi.singlePlayerMode = SingleOrMulti.selectedSegmentIndex == 0 ? true : false
             }
         }
     }
@@ -151,7 +152,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
     }
     //**********************************************************
-    
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
