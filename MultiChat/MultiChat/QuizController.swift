@@ -295,7 +295,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         //        }
     }
     
-    // may be easier to set each button to tag then just check answer that way.
+    // may be easier to set each button to tag then just check answer that way. nah.
     @IBAction func selectAnswer(_ sender: UIButton) {
         switch sender {
         case A_Button:

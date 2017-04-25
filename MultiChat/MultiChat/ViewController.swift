@@ -160,17 +160,20 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func obtainQuizPage() {
+        var doneLoading = false
+        // read all the quizzes in and store to the array we will pass.
         var quizQuestions = [Question]()
         quizNum = quizNum + 1
         let url = URL(string: "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz\(quizNum).json")
         
-
+           
         // had to change info.plist to use http since ios wants to use https only
         URLSession.shared.dataTask(with: url!) { (data, response, error) in
             
             if error != nil {
                 print(error!)
-            } else {
+            }
+            else {
             
             do {
                 
@@ -197,13 +200,18 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 }
                 
             } catch {
-                print("encountered error")
+                doneLoading = true
+                print("finished loading quizzes")
             }
+                if !doneLoading {
+                    self.obtainQuizPage()
+                }
                 }
     
     
     
             }.resume()
     }
+    
 }
 
