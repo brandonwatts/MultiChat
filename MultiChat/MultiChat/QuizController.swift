@@ -77,6 +77,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // default choice set
+        A_Button = animateChoice(button: A_Button)
+        
         selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
         /*** Setup Motion Manager ***/
@@ -121,18 +124,25 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         levelTimer.angle = 360
         timeLabel.text = String(QUESTION_TIME)
         
-        /*** Every second we decrease the timer by 1 and take a little off the display ***/
-        levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
+        levelTimeSet()
         questionTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
         
         /*** Logic used to place Blank Avatars if the game is not full ***/
         let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
-        for index in (0 ... 3) {
-            if(index > NUMBER_OF_ACTIVE_PLAYERS!) {
+        for index in (1 ... 3) {
+            if(index >= NUMBER_OF_ACTIVE_PLAYERS!) {
                 avatars[index].image = UIImage(named: "Blank_Avatar")
             }
         }
         
+        
+    }
+    
+    func levelTimeSet() {
+        levelTimer.stopAnimation()
+        levelTimer.angle = 360
+        /*** Every second we decrease the timer by 1 and take a little off the display ***/
+        levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
         
     }
     
@@ -179,14 +189,29 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             timeLabel.text = String(QUESTION_TIME)
         }
             
-            /*** The game has ended ***/
+            /*** The quiz has ended ***/
         else {
             motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
             Finish_Display_Text.isHidden = false
-            questionTimer.invalidate()
-            //END GAME
+            questionCount += 1
+            QUESTION_TIME = 20
+            levelTimeSet()
+            generateQuizScreen()
+            questionTimer.fire()
+            resetChoices()
+            //END GAME. not yet
         }
+    }
+    
+    func resetChoices() {
+        Submit_Button.isHidden = false
+        motionManager.stopDeviceMotionUpdates()
+        A_Button.isUserInteractionEnabled = true
+        B_Button.isUserInteractionEnabled = true
+        C_Button.isUserInteractionEnabled = true
+        D_Button.isUserInteractionEnabled = true
+        shouldShake = true
     }
     
     
@@ -296,9 +321,18 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func checkCorrectness() {
-        //        if CURRENT_CHOICE == quizArray[0].questionArray[0].getCorrect() {
+        let playerScores = [Player_1_Score, Player_2_Score, Player_3_Score, Player_4_Score]
+        // update score
+        for player in playerArray {
+            if player.getAnswer() == quizArray[quizArrayCount].questionArray[questionCount].getCorrect() {
+                player.updatePlayerScore(score: 1)
+            }
+        }
         
-        //        }
+        for i in 0 ... playerArray.count - 1 {
+            playerScores[i]?.text = String(playerArray[i].getScore())
+        }
+        
     }
     
     // may be easier to set each button to tag then just check answer that way. nah.
@@ -347,22 +381,28 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func generateQuizScreen() {
-        // set title
-        navigationItem.title = "\(quizArray[quizArrayCount].topic!)"
-        
-        // for each separate quiz
-        if quizArrayCount > quizArray.count {
-            quizArrayCount = 0
-        }
-        
-        // for each question in a quiz
-        displayQuestion(question: quizArray[quizArrayCount].questionArray[questionCount].sentence, answers: quizArray[quizArrayCount].questionArray[questionCount].possibilities)
-        questionCount += 1
         
         if quizArray[quizArrayCount].numberOfQuestions == questionCount {
             quizArrayCount += 1
             questionCount = 0
         }
+        
+        // for each separate quiz
+        if quizArrayCount == quizArray.count {
+            quizArrayCount = 0
+            questionCount = 0
+        }
+        
+        // set title
+        navigationItem.title = "\(quizArray[quizArrayCount].topic!)"
+        
+        // for each question in a quiz
+        displayQuestion(question: quizArray[quizArrayCount].questionArray[questionCount].sentence, answers: quizArray[quizArrayCount].questionArray[questionCount].possibilities)
+        
+        print("num quiz \(quizArrayCount)")
+        print("num questions \(questionCount)")
+        
+        
     }
     
     func displayQuestion(question: String, answers: [String: String]!){
@@ -428,6 +468,11 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func addPlayersToArray() {
+        
+        // add self to array
+        let currentPlayer = Player(pid: peerID.displayName)
+        playerArray.append(currentPlayer)
+        
         for users in session.connectedPeers {
             playerArray.append(Player(pid: users.displayName))
         }
@@ -446,6 +491,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
         displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
+        
+        playerArray[0].updateAnswer(ans: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
+        
         
         // send this data to each player
         // read in below, since this user is always added first, we know index 0 will always be current user.
