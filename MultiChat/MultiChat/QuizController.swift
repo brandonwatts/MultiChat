@@ -58,7 +58,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var NUMBER_OF_ACTIVE_PLAYERS: Int!  // Number of players currently in the game
     var selectionMatrix: [[Int]]!       // Matrix used to decide direction of answer choice
     var motionManager: CMMotionManager! // Handles Motion stuff
-    var singlePlayerMode: Bool?
 
     var quizArray: [Quiz]!
     var quizArrayCount = 0
@@ -106,7 +105,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         browser.delegate = self
         
         addPlayersToArray()
-        NUMBER_OF_ACTIVE_PLAYERS = singlePlayerMode! ? 0 : playerArray.count
+        NUMBER_OF_ACTIVE_PLAYERS = playerArray.count
         
         print("number active: \(NUMBER_OF_ACTIVE_PLAYERS!)")
         
