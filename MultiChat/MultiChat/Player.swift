@@ -27,6 +27,10 @@ class Player {
         answer = ans
     }
     
+    func getScore() -> Int {
+        return playerScore
+    }
+    
     func getPlayerId() -> String {
         return playerId
     }

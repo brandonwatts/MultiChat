@@ -61,6 +61,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var singlePlayerMode: Bool?
 
     var quizArray: [Quiz]!
+    var quizArrayCount = 0
+    var questionCount = 0
+    
     
     /*** Connection Handling ***/
     var session: MCSession!
@@ -108,7 +111,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         print("number active: \(NUMBER_OF_ACTIVE_PLAYERS!)")
         
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
-        displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
+//        displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
+        
+        generateQuizScreen()
         
         /*** Set the level color ***/
         LEVEL_COLOR = UIColor(red:3.0/255.0, green:169.0/255.0, blue:244.0/255.0, alpha:1.0)
@@ -342,6 +347,25 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
+    func generateQuizScreen() {
+        // set title
+        navigationItem.title = "\(quizArray[quizArrayCount].topic!)"
+        
+        // for each separate quiz
+        if quizArrayCount > quizArray.count {
+            quizArrayCount = 0
+        }
+        
+        // for each question in a quiz
+        displayQuestion(question: quizArray[quizArrayCount].questionArray[questionCount].sentence, answers: quizArray[quizArrayCount].questionArray[questionCount].possibilities)
+        questionCount += 1
+        
+        if quizArray[quizArrayCount].numberOfQuestions == questionCount {
+            quizArrayCount += 1
+            questionCount = 0
+        }
+    }
+    
     func displayQuestion(question: String, answers: [String: String]!){
         Question_Text.text = question;
         A_Button.setTitle("A) \(answers["A"]!)", for: .normal)
@@ -425,8 +449,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         
         // send this data to each player
-        // read in below
-        let sending = ["pid": peerID.displayName, "answer": CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!) as Any, "score": 0] as [String : Any]
+        // read in below, since this user is always added first, we know index 0 will always be current user.
+        let sending = ["pid": peerID.displayName, "answer": CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!) as Any, "score": playerArray[0].getScore()] as [String : Any]
         
         let data = NSKeyedArchiver.archivedData(withRootObject: sending)
         
