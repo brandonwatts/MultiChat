@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D00D06A1EAF7D6C00B6AA09 /* placeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D00D0691EAF7D6C00B6AA09 /* placeCell.swift */; };
+		5D00D06C1EAF7DFA00B6AA09 /* GameOverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D00D06B1EAF7DFA00B6AA09 /* GameOverViewController.swift */; };
 		5D171B911EABBCE60005BFD3 /* KDCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D171B901EABBCE60005BFD3 /* KDCircularProgress.swift */; };
 		5D171B931EABDE940005BFD3 /* QuizController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D171B921EABDE940005BFD3 /* QuizController.swift */; };
 		5DC0737D1EA95B6D0028BBFA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0737C1EA95B6D0028BBFA /* AppDelegate.swift */; };
@@ -20,6 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D00D0691EAF7D6C00B6AA09 /* placeCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = placeCell.swift; sourceTree = "<group>"; };
+		5D00D06B1EAF7DFA00B6AA09 /* GameOverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverViewController.swift; sourceTree = "<group>"; };
 		5D171B901EABBCE60005BFD3 /* KDCircularProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDCircularProgress.swift; sourceTree = "<group>"; };
 		5D171B921EABDE940005BFD3 /* QuizController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizController.swift; sourceTree = "<group>"; };
 		5DC073791EA95B6D0028BBFA /* MultiChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MultiChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +79,8 @@
 				5DC073881EA95B6D0028BBFA /* Info.plist */,
 				5D171B901EABBCE60005BFD3 /* KDCircularProgress.swift */,
 				5D171B921EABDE940005BFD3 /* QuizController.swift */,
+				5D00D0691EAF7D6C00B6AA09 /* placeCell.swift */,
+				5D00D06B1EAF7DFA00B6AA09 /* GameOverViewController.swift */,
 			);
 			path = MultiChat;
 			sourceTree = "<group>";
@@ -159,6 +165,8 @@
 				B52F7FD61EAC484600395BC7 /* Player.swift in Sources */,
 				5DC0737D1EA95B6D0028BBFA /* AppDelegate.swift in Sources */,
 				B5FAE43C1EABB5550041E0F0 /* Quiz.swift in Sources */,
+				5D00D06A1EAF7D6C00B6AA09 /* placeCell.swift in Sources */,
+				5D00D06C1EAF7DFA00B6AA09 /* GameOverViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
