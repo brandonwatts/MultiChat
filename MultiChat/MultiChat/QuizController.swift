@@ -105,6 +105,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         addPlayersToArray()
         NUMBER_OF_ACTIVE_PLAYERS = singlePlayerMode! ? 0 : playerArray.count
         
+        print("number active: \(NUMBER_OF_ACTIVE_PLAYERS!)")
+        
         /*** EXAMPLE ON DISPLAYING A QUESTION ***/
         displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
         
@@ -121,8 +123,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         /*** Logic used to place Blank Avatars if the game is not full ***/
         let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
-        for index in (1 ... 3) {
-            if(index > NUMBER_OF_ACTIVE_PLAYERS) {
+        for index in (0 ... 3) {
+            if(index > NUMBER_OF_ACTIVE_PLAYERS!) {
                 avatars[index].image = UIImage(named: "Blank_Avatar")
             }
         }

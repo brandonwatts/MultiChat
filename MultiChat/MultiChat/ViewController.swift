@@ -13,6 +13,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var quizNum = 0
     var quizArray = [Quiz]()
     
+    var playAlone = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -35,6 +37,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         obtainQuizPage()
         
     }
+    
     @IBAction func connect(_ sender: Any) {
         present(browser, animated: true, completion: nil)
 
@@ -47,9 +50,9 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         print("peers connected: \(session.connectedPeers.count)")
         
         if SingleOrMulti.selectedSegmentIndex == 0 && session.connectedPeers.count == 0 {
+            playAlone = true
             performSegue(withIdentifier: "quiz", sender: nil)
         }
-        
         else if session.connectedPeers.count >= 1 && SingleOrMulti.selectedSegmentIndex == 1 {
             let send = ["segue": "quiz"] as [String: Any]
             let data = NSKeyedArchiver.archivedData(withRootObject: send)
@@ -59,6 +62,9 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 print("sending error")
             }
             performSegue(withIdentifier: "quiz", sender: nil)
+        }
+        else if session.connectedPeers.count >= 1 && SingleOrMulti.selectedSegmentIndex == 0 {
+            alertUser(alert: "You're connected with others, play with them!")
         }
         else{
             alertUser(alert: "Get some friends, need atleast two users for this option!")
@@ -85,7 +91,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             if let multi = segue.destination as? QuizController {
                 multi.session = session as MCSession
                 multi.quizArray = self.quizArray
-                multi.singlePlayerMode = SingleOrMulti.selectedSegmentIndex == 0 ? true : false
+                multi.singlePlayerMode = playAlone ? true : false
             }
         }
     }
