@@ -79,6 +79,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
         /*** Setup Motion Manager ***/
@@ -146,7 +147,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         levelTimer.angle = 360
         /*** Every second we decrease the timer by 1 and take a little off the display ***/
         levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
-        
     }
     
     /*** Shake the device to get a random answer choice ***/
@@ -183,16 +183,12 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
-    
     func updateTimer(){
         
         /*** If there is still time in the game ***/
         if (QUESTION_TIME != 0) {
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
-            if QUESTION_TIME == 10 {
-                Finish_Display_Text.isHidden = true
-            }
             checkEarlyFinish()
         }
             
@@ -207,7 +203,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             Question_Text.text = "Correct Answer: \(quizArray[quizArrayCount].questionArray[questionCount].getCorrect())"
             motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
-            Finish_Display_Text.isHidden = false
             questionCount += 1
             QUESTION_TIME = 23 // dumb
             questionTimer.fire()
@@ -382,6 +377,19 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         else {
             Finish_Display_Text.text = "Wrong!"
         }
+        
+        UIView.animate(withDuration: 2, delay: 0,  usingSpringWithDamping: 0.7,
+                       initialSpringVelocity: 0.3, options: [.autoreverse, .curveEaseInOut],
+                       animations: {
+                        self.Finish_Display_Text.isHidden = false
+                        self.Finish_Display_Text.center.x -= self.view.bounds.width
+        },
+                       completion: {
+                        (value: Bool) in
+                        self.Finish_Display_Text.isHidden = true
+        }
+        )
+
         
         // update other players score
         for player in playerArray {
@@ -567,7 +575,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         C_Button.isUserInteractionEnabled = false
         D_Button.isUserInteractionEnabled = false
         shouldShake = false
-        
         
         
         let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
