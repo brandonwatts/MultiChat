@@ -114,9 +114,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         print("number active: \(NUMBER_OF_ACTIVE_PLAYERS!)")
         
-        /*** EXAMPLE ON DISPLAYING A QUESTION ***/
-//        displayQuestion(question: "How old was Steve Jobs when he died?", answers: ["A":"22","B": "49","C": "53", "D":"56"])
-        
         generateQuizScreen()
         
         /*** Set the level color ***/
@@ -127,7 +124,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         timeLabel.text = String(QUESTION_TIME)
         
         levelTimeSet()
-        questionTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+        startTimer()
         
         /*** Logic used to place Blank Avatars if the game is not full ***/
         let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
@@ -205,7 +202,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             checkCorrectness()
             questionCount += 1
             QUESTION_TIME = 23 // dumb
-            questionTimer.fire()
+            resetTimer()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 self.levelTimeSet()
@@ -242,6 +239,15 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 localPlayer.hasSubmitted(sub: false)
             }
         }
+    }
+    
+    func startTimer(){
+        questionTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(QuizController.updateTimer), userInfo: "timer", repeats: true)
+    }
+    
+    func resetTimer(){
+        questionTimer.invalidate()
+        startTimer()
     }
     
     func resetChoices() {
@@ -457,6 +463,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 let playersAndMe = playerArray + [localPlayer]
                 view.dataSet = playersAndMe
                 view.MY_ID = localPlayer.getPlayerId()
+                view.currentQuizNumber = quizArrayCount
+                view.MAXIMUM_QUIZES = quizArray.count
             }
         }
     }
@@ -472,8 +480,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         // for each separate quiz
         if quizArrayCount == quizArray.count {
             nextQuiz = true
-            //quizArrayCount = 0
-            //questionCount = 0
         }
         
         if !nextQuiz {
@@ -568,6 +574,30 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             print("something is very wrong")
             break
         }
+    }
+    
+    /*** The player has clicked "Replay" on the Game Over screen ***/
+    @IBAction func backToQuiz(segue: UIStoryboardSegue) {
+        if let sourceViewController = segue.source as? GameOverViewController {
+            quizArrayCount = sourceViewController.nextQuizNumber!
+        }
+        QUESTION_TIME = 20
+        questionCount = 0
+        nextQuiz = false
+        for player in playerArray {
+            player.playerScore = 0
+        }
+        localPlayer.playerScore = 0
+        
+        //Ugly and will fix
+        displayScore(forPlayer: 0, withAnswer: "0")
+        displayScore(forPlayer: 1, withAnswer: "0")
+        displayScore(forPlayer: 2, withAnswer: "0")
+        displayScore(forPlayer: 3, withAnswer: "0")
+
+        levelTimeSet()
+        generateQuizScreen()
+        resetTimer()
     }
     
     // hold our players, referenced by index

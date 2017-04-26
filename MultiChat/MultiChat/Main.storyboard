@@ -89,7 +89,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Question Sheet" translatesAutoresizingMaskIntoConstraints="NO" id="Sry-lF-GxN">
-                                <rect key="frame" x="19" y="189" width="376" height="476"/>
+                                <rect key="frame" x="19" y="189" width="376" height="460"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="460" id="5NQ-2n-Sfc"/>
+                                </constraints>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="bottom" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="B7Y-eH-5Fy">
                                 <rect key="frame" x="27" y="72" width="360" height="109.33333333333334"/>
@@ -376,7 +379,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y6w-az-63G">
-                                <rect key="frame" x="35" y="506" width="130" height="45"/>
+                                <rect key="frame" x="35" y="490" width="130" height="45"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="16"/>
                                 <state key="normal" title="C)" backgroundImage="Button">
                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -396,7 +399,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j7Q-h2-Kb0">
-                                <rect key="frame" x="249" y="506" width="130" height="45"/>
+                                <rect key="frame" x="249" y="490" width="130" height="45"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="16"/>
                                 <state key="normal" title="D)" backgroundImage="Button">
                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -410,12 +413,12 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="135" id="Afg-zO-Npt"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="18"/>
+                                <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="22"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j2T-XY-cfG">
-                                <rect key="frame" x="142" y="587" width="130" height="45"/>
+                                <rect key="frame" x="142" y="565" width="130" height="45"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="18"/>
                                 <state key="normal" title="Submit" backgroundImage="Submit_Button">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -425,11 +428,11 @@
                                 </connections>
                             </button>
                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Correct!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I4e-K6-QA7">
-                                <rect key="frame" x="82" y="673" width="251" height="63"/>
+                                <rect key="frame" x="90" y="651" width="235.33333333333331" height="70"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="63" id="nsQ-Vt-VTa"/>
+                                    <constraint firstAttribute="height" constant="70" id="nsQ-Vt-VTa"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="64"/>
+                                <fontDescription key="fontDescription" name="AvenirNext-Bold" family="Avenir Next" pointSize="60"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -438,7 +441,7 @@
                         <constraints>
                             <constraint firstItem="Sry-lF-GxN" firstAttribute="leading" secondItem="1cT-l2-AsZ" secondAttribute="leading" constant="19" id="3PG-Iw-yQp"/>
                             <constraint firstItem="B7Y-eH-5Fy" firstAttribute="top" secondItem="8Zr-jK-bJR" secondAttribute="bottom" constant="8" id="BUV-DB-INr"/>
-                            <constraint firstItem="v9Y-6U-BOR" firstAttribute="top" secondItem="I4e-K6-QA7" secondAttribute="bottom" id="CTB-Zr-tsA"/>
+                            <constraint firstItem="v9Y-6U-BOR" firstAttribute="top" secondItem="I4e-K6-QA7" secondAttribute="bottom" constant="15" id="CTB-Zr-tsA"/>
                             <constraint firstItem="j7Q-h2-Kb0" firstAttribute="leading" secondItem="C4U-cR-jhH" secondAttribute="leading" id="CZS-b6-YWG"/>
                             <constraint firstAttribute="trailingMargin" secondItem="j2T-XY-cfG" secondAttribute="trailing" constant="122" id="DfI-1I-ZdJ"/>
                             <constraint firstItem="C4U-cR-jhH" firstAttribute="top" secondItem="fUw-Zb-URD" secondAttribute="top" id="Iag-bc-rpq"/>
@@ -448,7 +451,7 @@
                             <constraint firstItem="B7Y-eH-5Fy" firstAttribute="centerX" secondItem="1cT-l2-AsZ" secondAttribute="centerX" id="Pbn-th-uxP"/>
                             <constraint firstAttribute="trailing" secondItem="Sry-lF-GxN" secondAttribute="trailing" constant="19" id="RLf-kk-jIK"/>
                             <constraint firstAttribute="trailingMargin" secondItem="j7Q-h2-Kb0" secondAttribute="trailing" constant="15" id="T5t-2I-hW0"/>
-                            <constraint firstItem="j2T-XY-cfG" firstAttribute="top" secondItem="j7Q-h2-Kb0" secondAttribute="bottom" constant="36" id="TcB-6Y-hz2"/>
+                            <constraint firstItem="j2T-XY-cfG" firstAttribute="top" secondItem="j7Q-h2-Kb0" secondAttribute="bottom" constant="30" id="TcB-6Y-hz2"/>
                             <constraint firstItem="j7Q-h2-Kb0" firstAttribute="bottom" secondItem="Y6w-az-63G" secondAttribute="bottom" id="ZHH-Mk-7qJ"/>
                             <constraint firstItem="P4p-bi-4oE" firstAttribute="leading" secondItem="1cT-l2-AsZ" secondAttribute="leadingMargin" constant="40" id="cfY-f9-oNH"/>
                             <constraint firstAttribute="trailingMargin" secondItem="P4p-bi-4oE" secondAttribute="trailing" constant="40" id="cpC-vI-AUH"/>
@@ -522,7 +525,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="submitAnswer:" destination="7pW-SS-yrH" eventType="touchUpInside" id="Pdy-IF-zzF"/>
+                                    <segue destination="Hzh-bf-aY4" kind="unwind" unwindAction="backToQuizWithSegue:" id="2ty-b8-odK"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3rd" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VHI-Eq-pHK">
@@ -663,6 +666,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XyA-Rv-rp4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Hzh-bf-aY4" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2957.971014492754" y="153.2608695652174"/>
         </scene>

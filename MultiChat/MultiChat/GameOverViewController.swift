@@ -14,14 +14,12 @@ class GameOverViewController: UIViewController, UITableViewDataSource, UITableVi
     @IBOutlet weak var replayButton: UIButton!
     @IBOutlet weak var places: UITableView!
     
-    /*** Dataset of players from the previous screen (pass it through the segue) ***/
     var dataSet: [Player]?
-    
-    /*** Will need to set the ID (pass it through segue) ***/
     var MY_ID : String?
-    
-    /*** Used for the animation ***/
     var shownIndexes : [IndexPath] = []
+    var currentQuizNumber: Int?
+    var nextQuizNumber: Int?
+    var MAXIMUM_QUIZES: Int?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +27,11 @@ class GameOverViewController: UIViewController, UITableViewDataSource, UITableVi
         places.dataSource = self
         places.isScrollEnabled = false;
         
+        if( currentQuizNumber == MAXIMUM_QUIZES) {
+            nextQuizNumber = 0
+        } else {
+            nextQuizNumber = currentQuizNumber! + 1
+        }
         
         /*** Sort the players by thier score ***/
         let sortedData = dataSet?.sorted(by: sortFunc)
@@ -57,7 +60,6 @@ class GameOverViewController: UIViewController, UITableViewDataSource, UITableVi
                        completion: nil
         )
     }
-    
     
     func setPlace(data: [Player]) {
         for (index,player) in (data.enumerated()) {
