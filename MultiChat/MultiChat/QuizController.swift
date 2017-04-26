@@ -62,6 +62,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var quizArray: [Quiz]!
     var quizArrayCount = 0
     var questionCount = 0
+    var nextQuiz = false
     
     var localPlayer: Player!
     
@@ -77,9 +78,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // default choice set
-        A_Button = animateChoice(button: A_Button)
         
         selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
@@ -138,7 +136,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             }
         }
         
-        
+        // default choice set
+        A_Button = animateChoice(button: A_Button)
+        CURRENT_CHOICE = A_Button
     }
     
     func levelTimeSet() {
@@ -190,21 +190,62 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         if (QUESTION_TIME != 0) {
             QUESTION_TIME = QUESTION_TIME - 1
             timeLabel.text = String(QUESTION_TIME)
+            if QUESTION_TIME == 10 {
+                Finish_Display_Text.isHidden = true
+            }
+            checkEarlyFinish()
         }
             
             /*** The quiz has ended ***/
         else {
+            // need to display the answer...
+            // then undisplay it.
+            
+            // 3 second delay, to be efficient
+            timeLabel.isHidden = true
+            levelTimer.pauseAnimation()
+            Question_Text.text = "Correct Answer: \(quizArray[quizArrayCount].questionArray[questionCount].getCorrect())"
             motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
             Finish_Display_Text.isHidden = false
             questionCount += 1
-            QUESTION_TIME = 20
-            levelTimeSet()
-            
-            generateQuizScreen()
+            QUESTION_TIME = 23 // dumb
             questionTimer.fire()
-            resetChoices()
-            //END GAME. not yet
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                self.levelTimeSet()
+                self.generateQuizScreen()
+                self.timeLabel.isHidden = false
+                self.levelTimer.isHidden = false
+                self.resetChoices()
+            }
+        }
+    }
+    
+    func checkEarlyFinish() {
+        var allDone = 0
+        
+        if NUMBER_OF_ACTIVE_PLAYERS > 0 {
+            for player in playerArray {
+                if player.submitted {
+                    print("someone else submitted")
+                    allDone += 1
+                    
+                }
+            }
+            if allDone >= NUMBER_OF_ACTIVE_PLAYERS && localPlayer.submitted {
+                for player in playerArray {
+                    player.hasSubmitted(sub: false)
+                }
+                localPlayer.submitted = false
+                QUESTION_TIME = 0
+            }
+        }
+        else {
+            if localPlayer.submitted {
+                QUESTION_TIME = 0
+                localPlayer.hasSubmitted(sub: false)
+            }
         }
     }
     
@@ -403,6 +444,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     func generateQuizScreen() {
         
+        // end of current quiz
         if quizArray[quizArrayCount].numberOfQuestions == questionCount {
             quizArrayCount += 1
             questionCount = 0
@@ -414,12 +456,13 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             questionCount = 0
         }
         
-        // set title
-        navigationItem.title = "\(quizArray[quizArrayCount].topic!)"
+        if !nextQuiz {
+            // set title
+            navigationItem.title = "\(quizArray[quizArrayCount].topic!)"
         
-        // for each question in a quiz
-        displayQuestion(question: quizArray[quizArrayCount].questionArray[questionCount].sentence, answers: quizArray[quizArrayCount].questionArray[questionCount].possibilities)
-        
+            // for each question in a quiz
+            displayQuestion(question: quizArray[quizArrayCount].questionArray[questionCount].sentence, answers: quizArray[quizArrayCount].questionArray[questionCount].possibilities)
+        }
         print("num quiz \(quizArrayCount)")
         print("num questions \(questionCount)")
         
@@ -457,7 +500,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         return changedButton
     }
     
-    // note: users currently will be displayed by their index in playerArray
+    // note: users currently will be displayed by their index in playerArray,
+    // not player1 however
     func displayAnswer(forPlayer: Int, withAnswer: String) {
         
         switch(forPlayer){
@@ -510,10 +554,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func addPlayersToArray() {
-        
-        // add self to array
-//        let currentPlayer = Player(pid: peerID.displayName)
-//        playerArray.append(currentPlayer)
         // note: the only players in this array are your opponents
         for users in session.connectedPeers {
             playerArray.append(Player(pid: users.displayName))
@@ -531,26 +571,22 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         shouldShake = false
         
         
+        
         let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
         displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         localPlayer.updateAnswer(ans: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
-        
-        
-//        let myScore = Int(Player_1_Score.text!)
-        //playerArray[0].updateAnswer(ans: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
-//        Player_1_Score.text = String()
-        
+        localPlayer.hasSubmitted(sub: true)
         // send this data to each player
         // read in below, since this user is always added first, we know index 0 will always be current user.
-        let sending = ["pid": peerID.displayName, "answer": CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!) as Any] as [String : Any]
-//        "score": playerArray[0].getScore()
+        let sending = ["pid": peerID.displayName, "answer": CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!) as Any, "submit": true] as [String : Any]
         let data = NSKeyedArchiver.archivedData(withRootObject: sending)
         
         do {
             try session.send(data, toPeers: session.connectedPeers, with: .reliable)
         } catch {
-            print("error sending answer")
+            print("error s  ending answer")
         }
+        //checkEarlyFinish()
     }
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
@@ -599,27 +635,22 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 // need to create the other user each time information is sent?
                 if let playId = player["pid"] as? String {
                     if let playAns = player["answer"] as? String {
-//                        if let playScore = player["score"] as? Int {
-                
+                        if let playSubmit = player["submit"] as? Bool {
                 // we can now use this info to update each users choice.
                 // search through array?!
                 var tempCount = 2
                 for user in self.playerArray {
                     let id = user.getPlayerId()
-//                    if playId == self.peerID.displayName {
-//                        tempCount = 1
-//                    }
-                    
+            
                     if playId == id {
+                        user.hasSubmitted(sub: playSubmit)
                         user.updateAnswer(ans: playAns)
-//                        user.setPlayerScore(score: playScore)
-                        // needs testing...
                         self.displayAnswer(forPlayer: tempCount, withAnswer: user.getAnswer())
                     }
                     tempCount += 1
                 }
                         }
-//                    }
+                    }
                 }
                 
             }

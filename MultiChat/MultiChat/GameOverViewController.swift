@@ -28,22 +28,22 @@ class GameOverViewController: UIViewController, UITableViewDataSource, UITableVi
         places.delegate = self
         places.dataSource = self
         places.isScrollEnabled = false;
-        
-        /*** DUMMY TEST DATA **/
-        let p1 = Player(pid: "1")
-        p1.playerScore = 5
-        p1.playerAvatar = UIImage(named: "avatar")
-        let p2 = Player(pid: "2")
-        p2.playerScore = 7
-        p2.playerAvatar = UIImage(named: "avatar")
-        let p3 = Player(pid: "3")
-        p3.playerScore = 9
-        p3.playerAvatar = UIImage(named: "avatar")
-        let p4 = Player(pid: "4")
-        p4.playerScore = 8
-        p4.playerAvatar = UIImage(named: "avatar")
-        dataSet = [p1, p2,p3,p4]
-        /**************************/
+        // need to place localUser in array, then remove to pass back to quiz
+//        /*** DUMMY TEST DATA **/
+//        let p1 = Player(pid: "1")
+//        p1.playerScore = 5
+//        p1.playerAvatar = UIImage(named: "avatar")
+//        let p2 = Player(pid: "2")
+//        p2.playerScore = 7
+//        p2.playerAvatar = UIImage(named: "avatar")
+//        let p3 = Player(pid: "3")
+//        p3.playerScore = 9
+//        p3.playerAvatar = UIImage(named: "avatar")
+//        let p4 = Player(pid: "4")
+//        p4.playerScore = 8
+//        p4.playerAvatar = UIImage(named: "avatar")
+//        dataSet = [p1, p2,p3,p4]
+//        /**************************/
         
         /*** Sort the players by thier score ***/
         let sortedData = dataSet?.sorted(by: sortFunc)

@@ -15,10 +15,17 @@ class Player {
     var playerScore = 0
     var answer: String!
     var playerAvatar: UIImage!
+    var submitted: Bool!
     
     init(pid: String) {
         playerId = pid
         playerAvatar = UIImage(named: "Blank_Avatar")
+        submitted = false
+        answer = "F"
+    }
+    
+    func hasSubmitted(sub: Bool) {
+        submitted = sub
     }
     
     func updatePlayerScore(score: Int) {
