@@ -478,9 +478,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func animateChoice(button:UIButton) -> UIButton{
-        
-        Submit_Button.isHidden = false
-        
+                
         /***** Set Buttons back to original color ***/
         let orignialBackground = UIImage(named: "Button")
         A_Button.setBackgroundImage(orignialBackground, for: .normal)
