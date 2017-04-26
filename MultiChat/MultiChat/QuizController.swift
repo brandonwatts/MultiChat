@@ -450,6 +450,17 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "gameOver" {
+            if let view = segue.destination as? GameOverViewController {
+                questionTimer.invalidate()
+                let playersAndMe = playerArray + [localPlayer]
+                view.dataSet = playersAndMe
+                view.MY_ID = localPlayer.getPlayerId()
+            }
+        }
+    }
+    
     func generateQuizScreen() {
         
         // end of current quiz
@@ -460,17 +471,23 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         // for each separate quiz
         if quizArrayCount == quizArray.count {
-            quizArrayCount = 0
-            questionCount = 0
+            nextQuiz = true
+            //quizArrayCount = 0
+            //questionCount = 0
         }
         
         if !nextQuiz {
+            
+            
             // set title
             navigationItem.title = "\(quizArray[quizArrayCount].topic!)"
         
             // for each question in a quiz
             displayQuestion(question: quizArray[quizArrayCount].questionArray[questionCount].sentence, answers: quizArray[quizArrayCount].questionArray[questionCount].possibilities)
+        } else {
+            performSegue(withIdentifier: "gameOver", sender: nil)
         }
+        
         print("num quiz \(quizArrayCount)")
         print("num questions \(questionCount)")
         
@@ -628,7 +645,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
         
     }
-    
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         
