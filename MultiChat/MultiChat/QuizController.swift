@@ -63,6 +63,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     var quizArrayCount = 0
     var questionCount = 0
     
+    var localPlayer: Player!
     
     /*** Connection Handling ***/
     var session: MCSession!
@@ -107,6 +108,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         session.delegate = self
         browser.delegate = self
         
+        localPlayer = Player(pid: peerID.displayName)
+        
         addPlayersToArray()
         NUMBER_OF_ACTIVE_PLAYERS = playerArray.count
         
@@ -130,7 +133,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         /*** Logic used to place Blank Avatars if the game is not full ***/
         let avatars: [UIImageView] = [Player_1_Avatar, Player_2_Avatar, Player_3_Avatar, Player_4_Avatar]
         for index in (1 ... 3) {
-            if(index >= NUMBER_OF_ACTIVE_PLAYERS!) {
+            if(index > NUMBER_OF_ACTIVE_PLAYERS!) {
                 avatars[index].image = UIImage(named: "Blank_Avatar")
             }
         }
@@ -197,6 +200,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             questionCount += 1
             QUESTION_TIME = 20
             levelTimeSet()
+            
             generateQuizScreen()
             questionTimer.fire()
             resetChoices()
@@ -212,6 +216,11 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         C_Button.isUserInteractionEnabled = true
         D_Button.isUserInteractionEnabled = true
         shouldShake = true
+        Player_1_Speech_Bubble.isHidden = true
+        Player_2_Speech_Bubble.isHidden = true
+        Player_3_Speech_Bubble.isHidden = true
+        Player_4_Speech_Bubble.isHidden = true
+        
     }
     
     
@@ -321,16 +330,28 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func checkCorrectness() {
-        let playerScores = [Player_1_Score, Player_2_Score, Player_3_Score, Player_4_Score]
-        // update score
+        let playerScores = [Player_2_Score, Player_3_Score, Player_4_Score]
+        
+        // local player score
+        if localPlayer.getAnswer() == quizArray[quizArrayCount].questionArray[questionCount].getCorrect() {
+            localPlayer.updatePlayerScore(score: 1)
+            Player_1_Score.text = String(localPlayer.getScore())
+            Finish_Display_Text.text = "Correct!"
+        }
+        else {
+            Finish_Display_Text.text = "Wrong!"
+        }
+        
+        // update other players score
         for player in playerArray {
             if player.getAnswer() == quizArray[quizArrayCount].questionArray[questionCount].getCorrect() {
                 player.updatePlayerScore(score: 1)
             }
         }
-        
-        for i in 0 ... playerArray.count - 1 {
-            playerScores[i]?.text = String(playerArray[i].getScore())
+        if playerArray.count > 0 {
+            for i in 0 ... playerArray.count - 1 {
+                playerScores[i]?.text = String(playerArray[i].getScore())
+            }
         }
         
     }
@@ -461,6 +482,27 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
+    func displayScore(forPlayer: Int, withAnswer: String) {
+        
+        switch(forPlayer){
+        case 1:
+            Player_1_Score.text = withAnswer
+            break
+        case 2:
+            Player_2_Score.text = withAnswer
+            break
+        case 3:
+            Player_3_Score.text = withAnswer
+            break
+        case 4:
+            Player_4_Score.text = withAnswer
+            break
+        default:
+            print("something is very wrong")
+            break
+        }
+    }
+    
     // hold our players, referenced by index
     // not in use currently.
     func addPlayer(player: Player) {
@@ -470,9 +512,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func addPlayersToArray() {
         
         // add self to array
-        let currentPlayer = Player(pid: peerID.displayName)
-        playerArray.append(currentPlayer)
-        
+//        let currentPlayer = Player(pid: peerID.displayName)
+//        playerArray.append(currentPlayer)
+        // note: the only players in this array are your opponents
         for users in session.connectedPeers {
             playerArray.append(Player(pid: users.displayName))
         }
@@ -491,14 +533,17 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
         displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
+        localPlayer.updateAnswer(ans: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         
-        playerArray[0].updateAnswer(ans: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         
+//        let myScore = Int(Player_1_Score.text!)
+        //playerArray[0].updateAnswer(ans: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
+//        Player_1_Score.text = String()
         
         // send this data to each player
         // read in below, since this user is always added first, we know index 0 will always be current user.
-        let sending = ["pid": peerID.displayName, "answer": CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!) as Any, "score": playerArray[0].getScore()] as [String : Any]
-        
+        let sending = ["pid": peerID.displayName, "answer": CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!) as Any] as [String : Any]
+//        "score": playerArray[0].getScore()
         let data = NSKeyedArchiver.archivedData(withRootObject: sending)
         
         do {
@@ -554,23 +599,27 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 // need to create the other user each time information is sent?
                 if let playId = player["pid"] as? String {
                     if let playAns = player["answer"] as? String {
-                        if let playScore = player["score"] as? Int {
+//                        if let playScore = player["score"] as? Int {
                 
                 // we can now use this info to update each users choice.
                 // search through array?!
                 var tempCount = 2
                 for user in self.playerArray {
                     let id = user.getPlayerId()
+//                    if playId == self.peerID.displayName {
+//                        tempCount = 1
+//                    }
+                    
                     if playId == id {
                         user.updateAnswer(ans: playAns)
-                        user.updatePlayerScore(score: playScore)
+//                        user.setPlayerScore(score: playScore)
                         // needs testing...
                         self.displayAnswer(forPlayer: tempCount, withAnswer: user.getAnswer())
                     }
                     tempCount += 1
                 }
                         }
-                    }
+//                    }
                 }
                 
             }

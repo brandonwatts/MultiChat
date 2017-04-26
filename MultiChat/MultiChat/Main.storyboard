@@ -549,7 +549,7 @@
                                                 <rect key="frame" x="0.0" y="28" width="334" height="100"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="thg-WG-4ww" id="HfP-ol-yt6">
-                                                    <rect key="frame" x="0.0" y="0.0" width="334" height="99.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="334" height="100"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="251" text="Score" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZG-ej-voA">

@@ -25,6 +25,10 @@ class Player {
         playerScore = playerScore + score
     }
     
+    func setPlayerScore(score: Int) {
+        playerScore = score
+    }
+    
     func updateAnswer(ans: String){
         answer = ans
     }
