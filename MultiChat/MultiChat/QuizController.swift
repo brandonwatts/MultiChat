@@ -43,42 +43,36 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBOutlet weak var Player_3_Speech_Bubble: UIView!
     @IBOutlet weak var Player_4_Speech_Bubble: UIView!
     
-    
-    @IBOutlet weak var Question_Text: UILabel!
-    @IBOutlet weak var Finish_Display_Text: UILabel!
-    @IBOutlet weak var Submit_Button: UIButton!
-    @IBOutlet weak var levelTimer: KDCircularProgress!
-    @IBOutlet weak var timeLabel: UILabel!
-    
-    var LEVEL_COLOR: UIColor?           // Current Color Scheme of the Level
-    var CURRENT_CHOICE: UIButton?       // Current Answer Choice Selected by the User
-    var questionTimer: Timer!           // Timer for the current Question
-    var QUESTION_TIME = 20              // Alloted time to answer the question
-    var shouldShake = true              // Variable to allow the user to shake the device
-    var NUMBER_OF_ACTIVE_PLAYERS: Int!  // Number of players currently in the game
-    var selectionMatrix: [[Int]]!       // Matrix used to decide direction of answer choice
-    var motionManager: CMMotionManager! // Handles Motion stuff
-
-    var quizArray: [Quiz]!
-    var quizArrayCount = 0
-    var questionCount = 0
-    var nextQuiz = false
-    
-    var localPlayer: Player!
-    
     /*** Connection Handling ***/
     var session: MCSession!
     var peerID: MCPeerID!
     
-    var browser: MCBrowserViewController!
-    var assistant: MCAdvertiserAssistant! // not sure if we still need to advertise here.
+    @IBOutlet weak var Question_Text: UILabel!          // Text of the Question
+    @IBOutlet weak var Finish_Display_Text: UILabel!    // Text that shows at the bottom of each question
+    @IBOutlet weak var Submit_Button: UIButton!         // Submit button
+    @IBOutlet weak var levelTimer: KDCircularProgress!  // Graphical Timer
+    @IBOutlet weak var timeLabel: UILabel!              // Number Timer
     
-    var playerArray = [Player]()
-    
+    var LEVEL_COLOR: UIColor?               // Current Color Scheme of the Level
+    var CURRENT_CHOICE: UIButton?           // Current Answer Choice Selected by the User
+    var questionTimer: Timer!               // Timer for the current Question
+    var QUESTION_TIME = 20                  // Alloted time to answer the question
+    var shouldShake = true                  // Variable to allow the user to shake the device
+    var NUMBER_OF_ACTIVE_PLAYERS: Int!      // Number of players currently in the game
+    var selectionMatrix: [[Int]]!           // Matrix used to decide direction of answer choice
+    var motionManager: CMMotionManager!     // Handles Motion stuff
+    var quizArray: [Quiz]!                  // Array that holds all the quizes
+    var quizArrayCount = 0                  // Current quiz number
+    var questionCount = 0                   // Current question number
+    var nextQuiz = false                    // Wheather the current quiz has ended
+    var localPlayer: Player!                // Player Device
+    var browser: MCBrowserViewController!   // Connectivity Browser
+    var playerArray = [Player]()            // Array of all the players you are connected to
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        session.delegate = self
+        browser.delegate = self
         
         selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
@@ -95,8 +89,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                     if(error == nil) {
                         self.handleDeviceMotionUpdate(deviceMotion: deviceMotion!)
                     } else {
-                        //handle the error
-                        print("motion error handled with print statement")
+                        print("Motion Error")
                     }
             })
         }
@@ -104,8 +97,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
         
         self.browser = MCBrowserViewController(serviceType: "multichat", session: session)
-        session.delegate = self
-        browser.delegate = self
         
         localPlayer = Player(pid: peerID.displayName)
         
@@ -142,7 +133,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func levelTimeSet() {
         levelTimer.stopAnimation()
         levelTimer.angle = 360
-        /*** Every second we decrease the timer by 1 and take a little off the display ***/
         levelTimer.animate(fromAngle: levelTimer.angle, toAngle: 0, duration: TimeInterval(QUESTION_TIME), completion: nil)
     }
     
@@ -395,7 +385,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                         self.Finish_Display_Text.isHidden = true
         }
         )
-
+        
         
         // update other players score
         for player in playerArray {
@@ -491,7 +481,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             
             // set title
             navigationItem.title = "\(quizArray[quizArrayCount].topic!)"
-        
+            
             // for each question in a quiz
             displayQuestion(question: quizArray[quizArrayCount].questionArray[questionCount].sentence, answers: quizArray[quizArrayCount].questionArray[questionCount].possibilities)
         } else {
@@ -513,7 +503,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func animateChoice(button:UIButton) -> UIButton{
-                
+        
         /***** Set Buttons back to original color ***/
         let orignialBackground = UIImage(named: "Button")
         A_Button.setBackgroundImage(orignialBackground, for: .normal)
@@ -605,7 +595,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         displayScore(forPlayer: 1, withAnswer: "0")
         displayScore(forPlayer: 2, withAnswer: "0")
         displayScore(forPlayer: 3, withAnswer: "0")
-
+        
         levelTimeSet()
         generateQuizScreen()
         resetTimer()
@@ -698,19 +688,19 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 if let playId = player["pid"] as? String {
                     if let playAns = player["answer"] as? String {
                         if let playSubmit = player["submit"] as? Bool {
-                // we can now use this info to update each users choice.
-                // search through array?!
-                var tempCount = 2
-                for user in self.playerArray {
-                    let id = user.getPlayerId()
-            
-                    if playId == id {
-                        user.hasSubmitted(sub: playSubmit)
-                        user.updateAnswer(ans: playAns)
-                        self.displayAnswer(forPlayer: tempCount, withAnswer: user.getAnswer())
-                    }
-                    tempCount += 1
-                }
+                            // we can now use this info to update each users choice.
+                            // search through array?!
+                            var tempCount = 2
+                            for user in self.playerArray {
+                                let id = user.getPlayerId()
+                                
+                                if playId == id {
+                                    user.hasSubmitted(sub: playSubmit)
+                                    user.updateAnswer(ans: playAns)
+                                    self.displayAnswer(forPlayer: tempCount, withAnswer: user.getAnswer())
+                                }
+                                tempCount += 1
+                            }
                         }
                     }
                 }
