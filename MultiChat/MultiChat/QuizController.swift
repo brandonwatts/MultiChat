@@ -382,13 +382,12 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                        animations: {
                         self.Finish_Display_Text.isHidden = false
                         self.Finish_Display_Text.center.x -= self.view.bounds.width
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+                            self.Finish_Display_Text.isHidden = true
+                        }
         },
-                       completion: {
-                        (value: Bool) in
-                        self.Finish_Display_Text.isHidden = true
-        }
+                           completion: nil
         )
-
         
         
         // update other players score
