@@ -71,8 +71,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        session.delegate = self
-        browser.delegate = self
+      
         
         selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
@@ -97,6 +96,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
         
         self.browser = MCBrowserViewController(serviceType: "multichat", session: session)
+        
+        session.delegate = self
+        browser.delegate = self
         
         localPlayer = Player(pid: peerID.displayName)
         
@@ -374,6 +376,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             Finish_Display_Text.text = "Wrong!"
         }
         
+
         UIView.animate(withDuration: 2, delay: 0,  usingSpringWithDamping: 0.7,
                        initialSpringVelocity: 0.3, options: [.autoreverse, .curveEaseInOut],
                        animations: {
@@ -385,6 +388,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                         self.Finish_Display_Text.isHidden = true
         }
         )
+
         
         
         // update other players score
