@@ -26,7 +26,7 @@
                                 <rect key="frame" x="62" y="358" width="290" height="82"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <attributedString key="attributedText">
-                                    <fragment content="MuitiQuiz">
+                                    <fragment content="MultiQuiz">
                                         <attributes>
                                             <color key="NSColor" red="0.011764705882352941" green="0.66274509803921566" blue="0.95686274509803915" alpha="1" colorSpace="calibratedRGB"/>
                                             <font key="NSFont" size="60" name="AvenirNext-Bold"/>
@@ -589,7 +589,7 @@
                                                 <rect key="frame" x="0.0" y="28" width="334" height="80"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="thg-WG-4ww" id="HfP-ol-yt6">
-                                                    <rect key="frame" x="0.0" y="0.0" width="334" height="79.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="334" height="80"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="251" text="Score" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZG-ej-voA">
