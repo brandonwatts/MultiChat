@@ -465,6 +465,10 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 view.MY_ID = localPlayer.getPlayerId()
                 view.currentQuizNumber = quizArrayCount
                 view.MAXIMUM_QUIZES = quizArray.count
+                view.session = self.session as MCSession
+                view.browser = self.browser
+                view.localPlayer = self.localPlayer
+                view.playerArray = self.playerArray
             }
         }
     }
@@ -580,7 +584,14 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBAction func backToQuiz(segue: UIStoryboardSegue) {
         if let sourceViewController = segue.source as? GameOverViewController {
             quizArrayCount = sourceViewController.nextQuizNumber!
+            session = sourceViewController.session as MCSession
+            browser = sourceViewController.browser
+            peerID = sourceViewController.peerID
+            localPlayer = sourceViewController.localPlayer
+            playerArray = sourceViewController.playerArray
         }
+        session.delegate = self
+        browser.delegate = self
         QUESTION_TIME = 20
         questionCount = 0
         nextQuiz = false

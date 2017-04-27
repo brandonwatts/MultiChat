@@ -73,7 +73,6 @@
 				B52F7FD51EAC484600395BC7 /* Player.swift */,
 				B5FAE43B1EABB5550041E0F0 /* Quiz.swift */,
 				B5FAE43D1EABCEC80041E0F0 /* Question.swift */,
-				5DC0738E1EA95BCF0028BBFA /* Main.storyboard */,
 				5DC073831EA95B6D0028BBFA /* Assets.xcassets */,
 				5DC073851EA95B6D0028BBFA /* LaunchScreen.storyboard */,
 				5DC073881EA95B6D0028BBFA /* Info.plist */,
@@ -81,6 +80,7 @@
 				5D171B921EABDE940005BFD3 /* QuizController.swift */,
 				5D00D0691EAF7D6C00B6AA09 /* placeCell.swift */,
 				5D00D06B1EAF7DFA00B6AA09 /* GameOverViewController.swift */,
+				5DC0738E1EA95BCF0028BBFA /* Main.storyboard */,
 			);
 			path = MultiChat;
 			sourceTree = "<group>";

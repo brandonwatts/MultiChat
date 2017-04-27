@@ -525,7 +525,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="Hzh-bf-aY4" kind="unwind" unwindAction="backToQuizWithSegue:" id="2ty-b8-odK"/>
+                                    <action selector="clickedReplay:" destination="mBn-JC-ejc" eventType="touchUpInside" id="skL-vW-gvN"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3rd" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VHI-Eq-pHK">
@@ -589,7 +589,7 @@
                                                 <rect key="frame" x="0.0" y="28" width="334" height="80"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="thg-WG-4ww" id="HfP-ol-yt6">
-                                                    <rect key="frame" x="0.0" y="0.0" width="334" height="80"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="334" height="79.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="255" verticalHuggingPriority="251" text="Score" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZG-ej-voA">
@@ -663,6 +663,7 @@
                         <outlet property="placeText" destination="VHI-Eq-pHK" id="gIE-Gh-ZTa"/>
                         <outlet property="places" destination="JeO-za-af8" id="fAh-t2-SUS"/>
                         <outlet property="replayButton" destination="lqE-dk-kce" id="Wyc-HE-I5t"/>
+                        <segue destination="Hzh-bf-aY4" kind="unwind" identifier="replayQuiz" unwindAction="backToQuizWithSegue:" id="Ttd-0d-c7k"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XyA-Rv-rp4" userLabel="First Responder" sceneMemberID="firstResponder"/>
