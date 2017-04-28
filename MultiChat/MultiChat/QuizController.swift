@@ -170,7 +170,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             // 3 second delay, to be efficient
             timeLabel.isHidden = true
             levelTimer.pauseAnimation()
-            Question_Text.text = "Correct Answer: \(quizArray[quizArrayCount].questionArray[questionCount].getCorrect())"
+            blinkCorrectAnswer(answer: quizArray[quizArrayCount].questionArray[questionCount].getCorrect())
             motionManager.stopDeviceMotionUpdates()
             checkCorrectness()
             questionCount += 1
@@ -179,12 +179,75 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 self.levelTimeSet()
+                self.stopBlinking()
                 self.generateQuizScreen()
                 self.timeLabel.isHidden = false
                 self.levelTimer.isHidden = false
                 self.resetChoices()
             }
         }
+    }
+    
+    func stopBlinking() {
+        self.A_Button.layer.removeAllAnimations()
+        self.B_Button.layer.removeAllAnimations()
+        self.C_Button.layer.removeAllAnimations()
+        self.D_Button.layer.removeAllAnimations()
+        
+        self.A_Button.alpha = 1.0;
+        self.B_Button.alpha = 1.0;
+        self.C_Button.alpha = 1.0;
+        self.D_Button.alpha = 1.0;
+
+    }
+    
+    func blinkCorrectAnswer(answer : String) {
+        
+        switch answer {
+        case "A":
+            self.A_Button.alpha = 1.0;
+            
+            UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseInOut, .repeat],
+                           animations: {
+                            self.A_Button.alpha = 0.0
+                                        },
+                           completion: nil
+            )
+
+        case "B":
+            self.B_Button.alpha = 1.0;
+            
+            UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseInOut, .repeat],
+                           animations: {
+                            self.B_Button.alpha = 0.0
+            },
+                           completion: nil
+            )
+
+        case "C":
+            self.C_Button.alpha = 1.0;
+            
+            UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseInOut, .repeat],
+                           animations: {
+                            self.C_Button.alpha = 0.0
+            },
+                           completion: nil
+            )
+
+        case "D":
+            self.D_Button.alpha = 1.0;
+            
+            UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseInOut, .repeat],
+                           animations: {
+                            self.D_Button.alpha = 0.0
+            },
+                           completion: nil
+            )
+
+        default:
+            break
+        }
+        
     }
     
     func checkEarlyFinish() {
@@ -304,7 +367,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         /*** We only want to be able to switch by tilting if an answer has been chosen ***/
         if(CURRENT_CHOICE != nil)
         {
-            print("Accepting Device Motion")
             if(roll > 45.0)
             {
                 shiftMatrix(direction: "right")
@@ -623,7 +685,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBAction func submitAnswer(_ sender: Any) {
         
         Submit_Button.isHidden = true
-        print("Stop Device Motion")
         motionManager.stopDeviceMotionUpdates()
         A_Button.isUserInteractionEnabled = false
         B_Button.isUserInteractionEnabled = false

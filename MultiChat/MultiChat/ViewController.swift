@@ -32,15 +32,11 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         browser.delegate = self
         browser.maximumNumberOfPeers = 4
         
-        
-        
         obtainQuizPage()
-        
     }
     
     @IBAction func connect(_ sender: Any) {
         present(browser, animated: true, completion: nil)
-
     }
     
     @IBAction func startQuiz(_ sender: Any) {
@@ -67,9 +63,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             alertUser(alert: "You're connected with others, play with them!")
         }
         else{
-            alertUser(alert: "Get some friends, need atleast two users for this option!")
+            alertUser(alert: "Get some friends, need at least two users for this option!")
         }
-        
     }
     
     func alertUser(alert: String) {
@@ -78,8 +73,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         let myAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(myAction)
         present(alert, animated: true, completion: nil)
-        
     }
+    
     // we need to pass this session on over to the quiz, to keep our connections
     // to check via terminal if connections (browse for services) are available or being advertised type
     //
@@ -102,9 +97,8 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
         dismiss(animated: true, completion: nil)
     }
-
+    
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL, withError error: Error?) {
-        
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
@@ -115,7 +109,7 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             if let info = NSKeyedUnarchiver.unarchiveObject(with: data) as? [String: Any]{
                 //self.updateChatView(newText: receivedString, id: peerID)
                 if let seg = info["segue"] as? String {
-                self.performSegue(withIdentifier: seg, sender: nil)
+                    self.performSegue(withIdentifier: seg, sender: nil)
                 }
             }
             
@@ -132,14 +126,12 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         // Called when a connected peer changes state (for example, goes offline)
         
-        
-        
         switch state {
         case MCSessionState.connected:
-//            if session.connectedPeers.count == 4 {
-//                assistant.stop()
-//                browser.browser?.stopBrowsingForPeers()
-//            }
+            //            if session.connectedPeers.count == 4 {
+            //                assistant.stop()
+            //                browser.browser?.stopBrowsingForPeers()
+            //            }
             print("Connected: \(peerID.displayName)")
             
         case MCSessionState.connecting:
@@ -147,21 +139,14 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             
         case MCSessionState.notConnected:
             print("Not Connected: \(peerID.displayName)")
-//            if session.connectedPeers.count <= 3 {
-//                self.assistant.start()
-//                self.browser.browser?.startBrowsingForPeers()
+            //            if session.connectedPeers.count <= 3 {
+            //                self.assistant.start()
+            //                self.browser.browser?.startBrowsingForPeers()
             
-//            }
+            //            }
             
         }
         
-    }
-    //**********************************************************
-
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func obtainQuizPage() {
@@ -171,7 +156,6 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         quizNum = quizNum + 1
         let url = URL(string: "http://www.people.vcu.edu/~ebulut/jsonFiles/quiz\(quizNum).json")
         
-           
         // had to change info.plist to use http since ios wants to use https only
         URLSession.shared.dataTask(with: url!) { (data, response, error) in
             
@@ -179,44 +163,36 @@ class ViewController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 print(error!)
             }
             else {
-            
-            do {
-                
-                let data = data
-                if let json = try JSONSerialization.jsonObject(with: data!) as? [String: Any] {
-                print(json)
-                let topic = json["topic"] as! String
-                let count = json["numberOfQuestions"] as! Int
-                
-                if let question = json["questions"] as? [[String: Any]] {
-                    for quest in question {
-                        let qNum = quest["number"] as! Int
-                        let sentence = quest["questionSentence"] as! String
-                        // works better to store as dictionary 
-                        let opt = quest["options"] as! [String: String]
-                        let correct = quest["correctOption"] as! String
+                do {
+                    let data = data
+                    if let json = try JSONSerialization.jsonObject(with: data!) as? [String: Any] {
+                        print(json)
+                        let topic = json["topic"] as! String
+                        let count = json["numberOfQuestions"] as! Int
                         
-                        quizQuestions.append(Question(sentence: sentence, poss: opt, correct: correct, qNum: qNum))
+                        if let question = json["questions"] as? [[String: Any]] {
+                            for quest in question {
+                                let qNum = quest["number"] as! Int
+                                let sentence = quest["questionSentence"] as! String
+                                // works better to store as dictionary
+                                let opt = quest["options"] as! [String: String]
+                                let correct = quest["correctOption"] as! String
+                                
+                                quizQuestions.append(Question(sentence: sentence, poss: opt, correct: correct, qNum: qNum))
+                            }
+                        }
+                        self.quizArray.append(Quiz(qArray: quizQuestions, top: topic, numQ: count))
                     }
+                    
+                } catch {
+                    doneLoading = true
+                    print("finished loading quizzes")
                 }
-                
-                
-                self.quizArray.append(Quiz(qArray: quizQuestions, top: topic, numQ: count))
-                }
-                
-            } catch {
-                doneLoading = true
-                print("finished loading quizzes")
-            }
                 if !doneLoading {
                     self.obtainQuizPage()
                 }
-                }
-    
-    
-    
-            }.resume()
+            }
+        }.resume()
     }
-    
 }
 
