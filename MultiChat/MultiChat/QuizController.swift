@@ -72,7 +72,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     override func viewDidLoad() {
         super.viewDidLoad()
       
-        
         selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
         initializeMotionManager()
@@ -111,7 +110,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             }
         }
         
-        // default choice set
         selectAnswer(A_Button)
     }
     
@@ -239,7 +237,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         Player_4_Speech_Bubble.isHidden = true
     }
     
-    
     /*** Helper function to select answer based on shift ***/
     func shiftMatrix(direction: String) {
         
@@ -303,8 +300,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         let attitude = deviceMotion.attitude
         let roll = degrees(radians: attitude.roll)
         let pitch = degrees(radians: attitude.pitch)
-        let yaw = degrees(radians: attitude.yaw)
-        
         
         /*** We only want to be able to switch by tilting if an answer has been chosen ***/
         if(CURRENT_CHOICE != nil)
@@ -356,7 +351,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         else {
             Finish_Display_Text.text = "Wrong!"
         }
-        
 
         UIView.animate(withDuration: 2, delay: 0,  usingSpringWithDamping: 0.7,
                        initialSpringVelocity: 0.3, options: [.autoreverse, .curveEaseInOut],
@@ -370,7 +364,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                            completion: nil
         )
         
-        
         // update other players score
         for player in playerArray {
             if player.getAnswer() == quizArray[quizArrayCount].questionArray[questionCount].getCorrect() {
@@ -382,10 +375,8 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                 playerScores[i]?.text = String(playerArray[i].getScore())
             }
         }
-        
     }
     
-    // may be easier to set each button to tag then just check answer that way. nah.
     @IBAction func selectAnswer(_ sender: UIButton) {
         switch sender {
         case A_Button:
@@ -430,10 +421,15 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
+    /*** Function called when all the quizes have been played ***/
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         if segue.identifier == "gameOver" {
+
+            questionTimer.invalidate()                  // Disable the timer
+            motionManager.stopDeviceMotionUpdates()     // Stop accepting motion updates
+            
             if let view = segue.destination as? GameOverViewController {
-                questionTimer.invalidate()
                 let playersAndMe = playerArray + [localPlayer]
                 view.dataSet = playersAndMe
                 view.MY_ID = localPlayer.getPlayerId()
@@ -534,16 +530,16 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func initializeMotionManager() {
-        /*** Setup Motion Manager ***/
+        
         motionManager = CMMotionManager()
         motionManager.startAccelerometerUpdates()
         motionManager.deviceMotionUpdateInterval = 0.1
         
         if motionManager.isAccelerometerAvailable == true {
+            
             motionManager.startDeviceMotionUpdates(
                 to: OperationQueue.current!, withHandler: {
                     (deviceMotion, error) -> Void in
-                    
                     if(error == nil) {
                         self.handleDeviceMotionUpdate(deviceMotion: deviceMotion!)
                     } else {
@@ -551,11 +547,9 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                     }
             })
         }
-
     }
     
     func displayScore(forPlayer: Int, withAnswer: String) {
-        
         switch(forPlayer){
         case 1:
             Player_1_Score.text = withAnswer
@@ -577,38 +571,44 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     /*** The player has clicked "Replay" on the Game Over screen ***/
     @IBAction func backToQuiz(segue: UIStoryboardSegue) {
+        
         if let sourceViewController = segue.source as? GameOverViewController {
-            quizArrayCount = sourceViewController.nextQuizNumber!
-            session = sourceViewController.session as MCSession
-            browser = sourceViewController.browser
-            peerID = sourceViewController.peerID
-            localPlayer = sourceViewController.localPlayer
-            playerArray = sourceViewController.playerArray
+            
+            quizArrayCount = sourceViewController.nextQuizNumber!   // Setup next quiz
+            session = sourceViewController.session as MCSession     // Grab the old session
+            browser = sourceViewController.browser                  // Grab the old browser
+            peerID = sourceViewController.peerID                    // Grab the peer ID
+            localPlayer = sourceViewController.localPlayer          // Grab the old local player
+            playerArray = sourceViewController.playerArray          // Grab the old player array
         }
-        session.delegate = self
-        browser.delegate = self
-        QUESTION_TIME = 20
-        questionCount = 0
-        nextQuiz = false
+        
+        session.delegate = self   // Set session delegate
+        browser.delegate = self   // Set browser delegate
+        QUESTION_TIME = 20        // reset Question time
+        questionCount = 0         // We want to start with first qeustion
+        nextQuiz = false          // Set nextQuiz to false because we are on a new quiz
+        
+        resetPlayerScores()        // Set all the players scores back to zero
+        levelTimeSet()             // Reset the graphical timer
+        initializeMotionManager()  // Start accepting motion updates
+        generateQuizScreen()       // Generate the question
+        resetTimer()               // Reset the timer
+        
+        selectAnswer(A_Button)     // Start by selecting an answer for the user
+    }
+    
+    func resetPlayerScores() {
         for player in playerArray {
             player.playerScore = 0
         }
         localPlayer.playerScore = 0
         
-        //Ugly and will fix
         displayScore(forPlayer: 0, withAnswer: "0")
         displayScore(forPlayer: 1, withAnswer: "0")
         displayScore(forPlayer: 2, withAnswer: "0")
         displayScore(forPlayer: 3, withAnswer: "0")
-        
-        levelTimeSet()
-        initializeMotionManager()
-        generateQuizScreen()
-        resetTimer()
     }
     
-    // hold our players, referenced by index
-    // not in use currently.
     func addPlayer(player: Player) {
         playerArray.append(player)
     }
@@ -631,7 +631,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         D_Button.isUserInteractionEnabled = false
         shouldShake = false
         
-        
         let index = CURRENT_CHOICE?.titleLabel?.text?.index((CURRENT_CHOICE?.titleLabel?.text?.startIndex)!, offsetBy: 1)
         displayAnswer(forPlayer: 1, withAnswer: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
         localPlayer.updateAnswer(ans: (CURRENT_CHOICE?.titleLabel?.text?.substring(to: index!))!)
@@ -646,7 +645,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         } catch {
             print("error s  ending answer")
         }
-        //checkEarlyFinish()
     }
     
     func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
@@ -667,9 +665,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        
-        // Called when a connected peer changes state (for example, goes offline)
-        
         switch state {
         case MCSessionState.connected:
             print("Connected: \(peerID.displayName)")
@@ -681,7 +676,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             print("Not Connected: \(peerID.displayName)")
             // take back to home?
         }
-        
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
@@ -711,15 +705,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
                         }
                     }
                 }
-                
             }
-            
-        })
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+        }) // End Dispatch Queue
+    } // End didRecieve Function
 }
