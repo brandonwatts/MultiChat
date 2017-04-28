@@ -75,23 +75,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         
         selectionMatrix = Array(repeating: Array(repeating: 0, count: 2), count: 2)  // Initialize the matrix to all 0's
         
-        /*** Setup Motion Manager ***/
-        motionManager = CMMotionManager()
-        motionManager.startAccelerometerUpdates()
-        motionManager.deviceMotionUpdateInterval = 0.1
-        
-        if motionManager.isAccelerometerAvailable == true {
-            motionManager.startDeviceMotionUpdates(
-                to: OperationQueue.current!, withHandler: {
-                    (deviceMotion, error) -> Void in
-                    
-                    if(error == nil) {
-                        self.handleDeviceMotionUpdate(deviceMotion: deviceMotion!)
-                    } else {
-                        print("Motion Error")
-                    }
-            })
-        }
+        initializeMotionManager()
         
         self.peerID = MCPeerID(displayName: UIDevice.current.name)
         
@@ -128,8 +112,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
         
         // default choice set
-        A_Button = animateChoice(button: A_Button)
-        CURRENT_CHOICE = A_Button
+        selectAnswer(A_Button)
     }
     
     func levelTimeSet() {
@@ -244,7 +227,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     
     func resetChoices() {
         Submit_Button.isHidden = false
-        motionManager.stopDeviceMotionUpdates()
+        initializeMotionManager()
         A_Button.isUserInteractionEnabled = true
         B_Button.isUserInteractionEnabled = true
         C_Button.isUserInteractionEnabled = true
@@ -254,7 +237,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         Player_2_Speech_Bubble.isHidden = true
         Player_3_Speech_Bubble.isHidden = true
         Player_4_Speech_Bubble.isHidden = true
-        
     }
     
     
@@ -315,7 +297,6 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
-    
     func handleDeviceMotionUpdate(deviceMotion:CMDeviceMotion) {
         
         let acceleration = deviceMotion.userAcceleration
@@ -328,7 +309,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         /*** We only want to be able to switch by tilting if an answer has been chosen ***/
         if(CURRENT_CHOICE != nil)
         {
-            print("Roll: \(roll) Pitch: \(pitch) Yaw: \(yaw) Acceleration: \(acceleration.z)")
+            print("Accepting Device Motion")
             if(roll > 45.0)
             {
                 shiftMatrix(direction: "right")
@@ -552,6 +533,27 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         }
     }
     
+    func initializeMotionManager() {
+        /*** Setup Motion Manager ***/
+        motionManager = CMMotionManager()
+        motionManager.startAccelerometerUpdates()
+        motionManager.deviceMotionUpdateInterval = 0.1
+        
+        if motionManager.isAccelerometerAvailable == true {
+            motionManager.startDeviceMotionUpdates(
+                to: OperationQueue.current!, withHandler: {
+                    (deviceMotion, error) -> Void in
+                    
+                    if(error == nil) {
+                        self.handleDeviceMotionUpdate(deviceMotion: deviceMotion!)
+                    } else {
+                        print("Motion Error")
+                    }
+            })
+        }
+
+    }
+    
     func displayScore(forPlayer: Int, withAnswer: String) {
         
         switch(forPlayer){
@@ -600,6 +602,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
         displayScore(forPlayer: 3, withAnswer: "0")
         
         levelTimeSet()
+        initializeMotionManager()
         generateQuizScreen()
         resetTimer()
     }
@@ -620,6 +623,7 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
     @IBAction func submitAnswer(_ sender: Any) {
         
         Submit_Button.isHidden = true
+        print("Stop Device Motion")
         motionManager.stopDeviceMotionUpdates()
         A_Button.isUserInteractionEnabled = false
         B_Button.isUserInteractionEnabled = false
