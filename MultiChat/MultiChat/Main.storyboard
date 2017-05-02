@@ -22,9 +22,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="McV-lY-PNQ">
-                                <rect key="frame" x="62" y="358" width="290" height="82"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="McV-lY-PNQ">
+                                <rect key="frame" x="43" y="359" width="289" height="82"/>
                                 <attributedString key="attributedText">
                                     <fragment content="MultiQuiz">
                                         <attributes>
@@ -36,21 +35,22 @@
                                 </attributedString>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="MJ6-yZ-EHj">
-                                <rect key="frame" x="67" y="500" width="280" height="29"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="MJ6-yZ-EHj">
+                                <rect key="frame" x="94" y="501" width="187" height="29"/>
                                 <segments>
                                     <segment title="Single Player"/>
                                     <segment title="Multipeer"/>
                                 </segments>
                             </segmentedControl>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Icon" translatesAutoresizingMaskIntoConstraints="NO" id="m2C-sJ-LdR">
-                                <rect key="frame" x="67" y="90" width="280" height="234"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Icon" translatesAutoresizingMaskIntoConstraints="NO" id="m2C-sJ-LdR">
+                                <rect key="frame" x="34.5" y="89" width="306" height="255"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l1B-yi-Iox">
-                                <rect key="frame" x="101" y="573" width="213" height="82"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l1B-yi-Iox">
+                                <rect key="frame" x="87.5" y="574" width="200" height="83"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="83" id="3Vr-nr-BCq"/>
+                                    <constraint firstAttribute="width" constant="200" id="G2r-Hb-pEk"/>
+                                </constraints>
                                 <state key="normal" backgroundImage="Start Button"/>
                                 <connections>
                                     <action selector="startQuiz:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iXT-gW-lAn"/>
@@ -58,6 +58,17 @@
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="m2C-sJ-LdR" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="25" id="Crj-89-sZ6"/>
+                            <constraint firstItem="McV-lY-PNQ" firstAttribute="top" secondItem="m2C-sJ-LdR" secondAttribute="bottom" constant="15" id="Dnh-jO-5LJ"/>
+                            <constraint firstItem="l1B-yi-Iox" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Ma8-kB-JNL"/>
+                            <constraint firstItem="McV-lY-PNQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="NNe-HC-AdE"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="l1B-yi-Iox" secondAttribute="bottom" constant="10" id="OK4-zs-yIB"/>
+                            <constraint firstItem="m2C-sJ-LdR" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="U4Q-IC-5H4"/>
+                            <constraint firstItem="MJ6-yZ-EHj" firstAttribute="top" secondItem="McV-lY-PNQ" secondAttribute="bottom" constant="60" id="lDI-6t-1Xi"/>
+                            <constraint firstItem="MJ6-yZ-EHj" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="r0j-cg-YtW"/>
+                            <constraint firstItem="l1B-yi-Iox" firstAttribute="top" secondItem="MJ6-yZ-EHj" secondAttribute="bottom" constant="45" id="zsR-av-CCo"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="rnl-fx-zSS">
                         <barButtonItem key="rightBarButtonItem" title="Connect" id="zlw-ab-b8u">
