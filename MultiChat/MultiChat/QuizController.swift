@@ -162,6 +162,10 @@ class QuizController: UIViewController, MCBrowserViewControllerDelegate, MCSessi
             checkEarlyFinish()
         }
             
+        else if (QUESTION_TIME == 1 && !localPlayer.submitted){
+            submitAnswer(CURRENT_CHOICE!)
+            localPlayer.hasSubmitted(sub: true)}
+            
             /*** The quiz has ended ***/
         else {
             // need to display the answer...
